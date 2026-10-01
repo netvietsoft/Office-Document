@@ -752,3 +752,19 @@
       - **Cặp Khóa SSH:** Ed25519 tại ~/.ssh/office_document_deploy và ~/.ssh/office_document_deploy.pub.
       - **Host Alias SSH Config:** Host github.com-office-document trỏ trực tiếp tới ~/.ssh/office_document_deploy.
       - **Remote URL Chuẩn:** git@github.com-office-document:netvietsoft/Office-Document.git.
+
+   9. **Đẩy Toàn Bộ Mã Nguồn Lên GitHub netvietsoft/Office-Document (Main Branch):**
+      - **Remote Origin:** git@github.com-office-document:netvietsoft/Office-Document.git.
+      - **Branch:** main.
+      - **Trạng thái Repo:** 394 tệp, 27,147 dòng code, dung lượng packfile gọn nhẹ ~95 MB.
+      - **Môi trường Server Deployment:**
+        * Backend đã có CONVERT/Backend/scripts/copy-cms.js hỗ trợ build đa nền tảng (Linux/Windows/macOS).
+        * Để triển khai Backend trên VPS/Server:
+          1. cd CONVERT/Backend
+          2. cp .env.example .env (hoặc tạo file .env điền port và token cấu hình)
+          3. 
+pm install
+          4. 
+pm run build
+          5. 
+pm start (hoặc dùng PM2: pm2 start dist/index.js --name "nextai-office")
