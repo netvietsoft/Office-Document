@@ -1,0 +1,153 @@
+openapi: 3.0.3
+info:
+  title: NextAI Office Suite API
+  version: 1.0.0
+  description: API Gateway and Management Endpoints for NextAI Office Suite Mobile Client and Admin CMS.
+servers:
+  - url: http://localhost:6033/api/v1
+    description: Local Development Server (Port 6033)
+  - url: https://api.nextaitechnology.com/v1
+    description: Production Server
+
+paths:
+  /convert:
+    post:
+      summary: Convert document format (e.g. HWP/DOCX to PDF/DOCX)
+      description: Uploads document and returns conversion task / download URL.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                outputFormat:
+                  type: string
+                  example: docx
+                password:
+                  type: string
+                  example: ""
+      responses:
+        '200':
+          description: Successful conversion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  jobId:
+                    type: string
+                  downloadUrl:
+                    type: string
+                  expiresAt:
+                    type: string
+
+  /android-event:
+    post:
+      summary: S2S Purchase and Attribution Event verification
+      description: Validates IAP tokens, prevents fraud, records attribution events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                adId:
+                  type: string
+                bundleId:
+                  type: string
+                  example: com.nextaitechnology.officedocument
+                productId:
+                  type: string
+                  example: office_sub_yearly_best
+                orderId:
+                  type: string
+                purchaseToken:
+                  type: string
+                adjustToken:
+                  type: string
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  isVip:
+                    type: boolean
+                  expiresDate:
+                    type: string
+
+  /ai/chat:
+    post:
+      summary: AI Assistant Document Chat and Commands
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                context:
+                  type: string
+                action:
+                  type: string
+                  enum: [chat, summarize, grammar_check, translate]
+      responses:
+        '200':
+          description: AI Generation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                  tokensUsed:
+                    type: integer
+
+  /storage/files:
+    get:
+      summary: List media files stored in Cloudflare R2
+      responses:
+        '200':
+          description: List of files
+    post:
+      summary: Upload new media asset to Cloudflare R2
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded
+
+  /storage/files/{fileId}:
+    delete:
+      summary: Delete media file and sync deletion to Cloudflare R2
+      parameters:
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File deleted from DB and R2 bucket synchronously

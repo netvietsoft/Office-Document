@@ -1,0 +1,10 @@
+# Cline / Roo Code Rules
+
+- Canonical Constitution: [AGENTS.md](file:///f:/APP/Ikame/Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure/AGENTS.md)
+- Canonical Coding Rules: [Docs/rules.md](file:///f:/APP/Ikame/Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure/Docs/rules.md)
+- Architecture Overview: [Docs/Architecture/overview.md](file:///f:/APP/Ikame/Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure/Docs/Architecture/overview.md)
+- State & Progress Tracking: [UPDATETODOS.md](file:///f:/APP/Ikame/Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure/UPDATETODOS.md)
+- Task Execution Log: [TASK_LOG.md](file:///f:/APP/Ikame/Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure/TASK_LOG.md)
+- Bilingual comments required: English + Vietnamese.
+- Never fake tests.
+- Check `.ai/locks.json` before writing files.

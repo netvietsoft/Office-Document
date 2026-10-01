@@ -1,0 +1,21 @@
+{
+  "source_apk": "Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure.xapk",
+  "original_package": "com.officedocument.word.docx.document.viewer",
+  "target_package": "com.nextaitechnology.officedocument",
+  "publisher": "nextaitechnology",
+  "modules_mapped": {
+    "editor": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/editor",
+    "viewer": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/viewer",
+    "scanner": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/scanner",
+    "pdf_tools": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/pdf_tools",
+    "ai_assistant": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/ai_assistant",
+    "transfer": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/transfer",
+    "premium": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/premium",
+    "cloud": "CONVERT/Android/app/src/main/java/com/nextaitechnology/officedocument/feature/cloud",
+    "backend_conversion": "CONVERT/Backend/src/services/conversion.service.ts",
+    "backend_billing": "CONVERT/Backend/src/services/billing.service.ts",
+    "backend_ai": "CONVERT/Backend/src/services/ai.service.ts",
+    "backend_storage": "CONVERT/Backend/src/services/cloudflare.service.ts",
+    "cms_admin": "CONVERT/Backend/src/cms"
+  }
+}

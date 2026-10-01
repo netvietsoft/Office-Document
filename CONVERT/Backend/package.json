@@ -1,0 +1,38 @@
+{
+  "name": "nextai-office-backend",
+  "version": "2.1.0",
+  "description": "NextAI Office Suite Full-Stack Backend & Modern Web CMS (Port 1500)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && node scripts/copy-cms.js",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "test": "jest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "multer": "^1.4.5-lts.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "uuid": "^9.0.1",
+    "swagger-ui-express": "^5.0.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "@types/multer": "^1.4.11",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/uuid": "^9.0.8",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/yamljs": "^0.2.34",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3",
+    "ts-node-dev": "^2.0.0",
+    "@playwright/test": "^1.42.1"
+  }
+}

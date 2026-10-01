@@ -1,0 +1,22 @@
+Yêu cầu : 
+Ghi nhớ app có 2 theme sáng và tối, khi chỉnh sửa phải đúng tông cả 2 theme
+1. Điều chỉnh lại menu Button ở các màn chức năng 
++ Menu đang bị tụt xuống dươi màn hình không thể click. check ảnh
+F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\1.jpg
+F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\6.jpg
+2. Khung nhập nội dung chat với AI , Bỏ màu nền xám 
+F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\5.jpg
+3. Thêm animation ánh sáng nhẹ trượt chéo 
+- Card unlock office document vip :F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\3.jpg
+- card được chọn gói , button thanh toán : F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\2.jpg
+4. Khi import tài liệu từ thiết bị lên, tab sang màn khác và quay lại thì folder lại bị trống, không ghi nhận import file vào được
+F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\Fixbug google play\4.jpg
+5. Menu Chat AI, các Icon chat AI 
+- Dùng AI để trao đổi, Tóm tắt , xuất tts . Các chức năng này chỉ đc sử dụng demo 1 lần, Các lần tiếp theo phải đăng ký Subcription mới được sử dụng
+6. Dựng Backend quản lý 
+- Quản lý API Key : gemini, grork kết nối lên app
+- Quản lý User: Mỗi User cài đặt sẽ có 1 mã thiết bị riêng : bắt lấy mã thiết bị để cho user chỉ dùng 1 lần duy nhất.
+- Quản lý User : Cài đặt, đăng ký gói vip, user đã hủy, ....
+- Quản lý doanh thu : ngày/ tuần/ tháng / năm / từ ngày x -> ngày Y
+
+

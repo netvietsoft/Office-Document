@@ -1,0 +1,7 @@
+id,email,password_hash,full_name,role,is_vip,vip_expires_at,status,created_at,updated_at
+usr-001,admin@nextaitechnology.com,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,NextAI SuperAdmin,admin,true,2099-12-31 23:59:59,active,2026-01-01 08:00:00,2026-01-01 08:00:00
+usr-002,manager@nextaitechnology.com,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,Office Operations Manager,manager,true,2099-12-31 23:59:59,active,2026-01-05 09:30:00,2026-01-05 09:30:00
+usr-003,alex.morgan@gmail.com,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,Alex Morgan,user,true,2027-01-15 14:20:00,active,2026-01-15 14:20:00,2026-01-15 14:20:00
+usr-004,sarah.chen@techcorp.io,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,Sarah Chen,user,true,2026-10-20 11:00:00,active,2026-02-20 11:00:00,2026-02-20 11:00:00
+usr-005,david.nguyen@enterprise.vn,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,David Nguyen,user,false,,active,2026-03-01 16:45:00,2026-03-01 16:45:00
+usr-006,elena.rostova@globalfirm.de,$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi,Elena Rostova,user,true,2026-12-10 09:15:00,active,2026-03-10 09:15:00,2026-03-10 09:15:00

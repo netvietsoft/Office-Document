@@ -1,0 +1,6 @@
+id,filename,r2_key,r2_bucket,content_type,size_bytes,public_url,uploaded_by,created_at
+med-001,word_to_pdf_tutorial.mp4,tutorials/word_to_pdf_tutorial.mp4,nextai-office-media,video/mp4,12450000,https://media.nextaitechnology.com/tutorials/word_to_pdf_tutorial.mp4,usr-001,2026-01-10 10:00:00
+med-002,pdf_signer_guide.mp4,tutorials/pdf_signer_guide.mp4,nextai-office-media,video/mp4,9820000,https://media.nextaitechnology.com/tutorials/pdf_signer_guide.mp4,usr-001,2026-01-10 10:15:00
+med-003,banner_super_sale_70.webp,banners/banner_super_sale_70.webp,nextai-office-media,image/webp,142000,https://media.nextaitechnology.com/banners/banner_super_sale_70.webp,usr-002,2026-02-01 08:30:00
+med-004,template_invoice_pro.docx,templates/template_invoice_pro.docx,nextai-office-media,application/vnd.openxmlformats-officedocument.wordprocessingml.document,520000,https://media.nextaitechnology.com/templates/template_invoice_pro.docx,usr-002,2026-02-15 14:00:00
+med-005,template_financial_model.xlsx,templates/template_financial_model.xlsx,nextai-office-media,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,890000,https://media.nextaitechnology.com/templates/template_financial_model.xlsx,usr-002,2026-02-15 14:10:00

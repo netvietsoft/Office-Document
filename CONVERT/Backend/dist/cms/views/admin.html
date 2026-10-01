@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NextAI Office Suite - Hệ Thống Quản Trị Toàn Diện (Port 1500)</title>
+  <link rel="stylesheet" href="/admin-assets/css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-header">
+      <div class="brand-logo">N</div>
+      <div>
+        <div class="brand-title">NextAI Office</div>
+        <div class="brand-sub">Backend & CMS • Port 1500</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <a id="nav-dashboard" class="nav-link active" onclick="switchTab('dashboard')">📊 Dashboard & Doanh Thu</a>
+      <a id="nav-api-keys" class="nav-link" onclick="switchTab('api-keys')">🔑 Quản Lý API Key (AI)</a>
+      <a id="nav-devices" class="nav-link" onclick="switchTab('devices')">📱 Quản Lý Thiết Bị (Device ID)</a>
+      <a id="nav-revenue" class="nav-link" onclick="switchTab('revenue')">💳 Sổ Giao Dịch Google Play</a>
+      <a id="nav-users" class="nav-link" onclick="switchTab('users')">👥 Người Dùng & Quản Trị</a>
+      <a id="nav-media" class="nav-link" onclick="switchTab('media')">☁️ Cloudflare R2 Media</a>
+      <a id="nav-conversions" class="nav-link" onclick="switchTab('conversions')">🔄 Tiến Trình Convert</a>
+      <a id="nav-ai-config" class="nav-link" onclick="switchTab('ai-config')">🤖 AI Persona & Khung Luật</a>
+      <a href="/docs" target="_blank" class="nav-link">📖 Swagger API Docs</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+    <!-- Top Sticky Bar -->
+    <header class="top-bar">
+      <div>
+        <h1 id="current-page-title" class="page-title">Dashboard & Doanh Thu</h1>
+        <div style="font-size: 12px; color: var(--brand-accent); font-weight: 600; margin-top: 2px;">
+          ● Máy Chủ Đang Chạy Trên Cổng 1500 • Hoạt Động Ổn Định
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="theme-toggle-btn" class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+        <span class="badge badge-active">Admin: NextAI Technology</span>
+      </div>
+    </header>
+
+    <div class="content-container">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: DASHBOARD & QUẢN LÝ DOANH THU       -->
+      <!-- ========================================== -->
+      <section id="tab-dashboard" class="tab-content">
+        <!-- Revenue Period Filter Bar -->
+        <div class="filter-bar">
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-right: 6px;">Thời Gian:</span>
+          <button class="filter-pill" onclick="changeRevenuePeriod('day')">Hôm Nay</button>
+          <button class="filter-pill" onclick="changeRevenuePeriod('week')">7 Ngày Qua</button>
+          <button class="filter-pill active" onclick="changeRevenuePeriod('month')">Tháng Này</button>
+          <button class="filter-pill" onclick="changeRevenuePeriod('year')">Năm Nay</button>
+          
+          <div class="date-picker-wrap">
+            <input type="date" id="revenue-from-date" class="date-input">
+            <span style="font-size: 12px; color: var(--text-secondary)">đến</span>
+            <input type="date" id="revenue-to-date" class="date-input">
+            <button class="btn btn-sm" onclick="applyCustomDateRevenue()">Lọc</button>
+          </div>
+        </div>
+
+        <!-- KPI Cards Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Doanh Thu (Kỳ Chọn)</span>
+            <span id="stat-revenue-vnd" class="stat-value" style="color: var(--brand-accent)">-- ₫</span>
+            <span id="stat-revenue-usd" class="stat-sub">≈ $0.00 USD</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Tổng Số Đơn Hàng</span>
+            <span id="stat-orders-count" class="stat-value">--</span>
+            <span id="stat-aov" class="stat-sub">Giá trị đơn TB: --</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Thuê Bao VIP Đang Active</span>
+            <span id="stat-active-vip" class="stat-value" style="color: var(--brand-primary)">--</span>
+            <span id="stat-cancelled-vip" class="stat-sub">Đã hủy: -- thuê bao</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Thiết Bị Cài Đặt</span>
+            <span id="stat-total-devices" class="stat-value">--</span>
+            <span id="stat-trials-used" class="stat-sub">Đã dùng hết 1 lần demo: --</span>
+          </div>
+        </div>
+
+        <!-- Revenue Timeline Chart Panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Biểu Đồ Xu Hướng Doanh Thu Thời Gian Thực (Google Play Subscriptions)</h2>
+              <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 4px;">Dữ liệu tự động cập nhật khi có sự kiện mua gói (Gói Tuần $4.99, Gói Tháng $14.99, Gói Năm $39.99)</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-secondary" onclick="simulateTestPurchase()">+ Mô Phỏng Mua Gói VIP (Test)</button>
+              <button class="btn btn-sm" onclick="loadRevenueAnalytics()">🔄 Cập Nhật</button>
+            </div>
+          </div>
+
+          <div id="revenue-chart-container" style="margin-top: 14px;">
+            <!-- Dynamic SVG Chart renders here -->
+          </div>
+        </div>
+
+        <!-- Plan Breakdown Distribution -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Cơ Cấu Doanh Thu Theo Gói Dịch Vụ</h2>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div style="background: var(--bg-primary); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">GÓI NĂM (PRO YEARLY $39.99)</div>
+              <div id="breakdown-yearly" style="font-size: 24px; font-weight: 800; color: #D97706; margin-top: 4px;">-- đơn</div>
+              <div style="font-size: 12px; color: var(--text-muted)">1,050,000 ₫ / năm (Tiết kiệm 70%)</div>
+            </div>
+            <div style="background: var(--bg-primary); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">GÓI THÁNG (PRO MONTHLY $14.99)</div>
+              <div id="breakdown-monthly" style="font-size: 24px; font-weight: 800; color: var(--brand-primary); margin-top: 4px;">-- đơn</div>
+              <div style="font-size: 12px; color: var(--text-muted)">390,000 ₫ / tháng</div>
+            </div>
+            <div style="background: var(--bg-primary); padding: 16px; border-radius: 10px; border: 1px solid var(--border-color);">
+              <div style="font-size: 12px; color: var(--text-secondary); font-weight: 600;">GÓI TUẦN (PRO WEEKLY $4.99)</div>
+              <div id="breakdown-weekly" style="font-size: 24px; font-weight: 800; color: var(--brand-accent); margin-top: 4px;">-- đơn</div>
+              <div style="font-size: 12px; color: var(--text-muted)">130,000 ₫ / tuần</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: QUẢN LÝ API KEY (Gemini & Grok)     -->
+      <!-- ========================================== -->
+      <section id="tab-api-keys" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Cấu Hình Khóa API Trí Tuệ Nhân Tạo (Gemini & Grok xAI)</h2>
+              <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 4px;">
+                Quản lý các API Key kết nối trực tiếp lên ứng dụng di động. Hỗ trợ kích hoạt, phân tải hạn ngạch (Quota) và xoay vòng khóa tự động.
+              </p>
+            </div>
+            <button class="btn" onclick="openAddKeyModal()">+ Thêm API Key Mới</button>
+          </div>
+
+          <!-- API Key Cards Grid -->
+          <div id="api-keys-grid" class="api-key-grid">
+            <!-- Dynamic Key Cards render here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: QUẢN LÝ THIẾT BỊ & USER (Device ID) -->
+      <!-- ========================================== -->
+      <section id="tab-devices" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Quản Lý Thiết Bị Cài Đặt & Khống Chế Dùng Thử 1 Lần</h2>
+              <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 4px;">
+                Mỗi thiết bị cài đặt sở hữu 1 Device ID độc nhất. Người dùng chỉ được dùng thử AI <strong>đúng 1 lần duy nhất</strong>. Muốn dùng tiếp bắt buộc phải đăng ký gói VIP.
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="device-search-input" placeholder="Tìm theo Device ID / Quốc gia..." class="form-input" style="width: 250px;" oninput="filterDevices()">
+              <button class="btn btn-sm" onclick="loadDevices()">🔄 Làm Mới</button>
+            </div>
+          </div>
+
+          <!-- Device Status Filter Pills -->
+          <div class="filter-bar">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-right: 6px;">Bộ Lọc:</span>
+            <button class="filter-pill active" onclick="filterDeviceStatus('all')">Tất Cả</button>
+            <button class="filter-pill" onclick="filterDeviceStatus('vip')">👑 VIP Active</button>
+            <button class="filter-pill" onclick="filterDeviceStatus('free')">Miễn Phí (Free)</button>
+            <button class="filter-pill" onclick="filterDeviceStatus('cancelled')">Đã Hủy Gói</button>
+          </div>
+
+          <!-- Desktop Table -->
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Thiết Bị (Device ID)</th>
+                  <th>Nền Tảng / OS</th>
+                  <th>App Version</th>
+                  <th>Trạng Thái Gói</th>
+                  <th>Dùng Thử AI (1 Lần)</th>
+                  <th>Số Lần Gọi AI</th>
+                  <th>Ngày Cài Đặt</th>
+                  <th>Hành Động</th>
+                </tr>
+              </thead>
+              <tbody id="devices-table-body"></tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Responsive Cards -->
+          <div id="devices-mobile-list" class="mobile-cards-list"></div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: SỔ GIAO DỊCH DOANH THU GOOGLE PLAY   -->
+      <!-- ========================================== -->
+      <section id="tab-revenue" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Sổ Giao Dịch Đơn Hàng Google Play Billing (IAP Ledger)</h2>
+              <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 4px;">Toàn bộ giao dịch mua gói VIP thành công từ Google Play Store và server S2S</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm" onclick="exportRevenueCsv()">📥 Xuất File CSV</button>
+              <button class="btn btn-sm" onclick="loadRevenueTransactions()">🔄 Làm Mới</button>
+            </div>
+          </div>
+
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mã Đơn Hàng (Order ID)</th>
+                  <th>Mã Thiết Bị</th>
+                  <th>Email Khách Hàng</th>
+                  <th>Gói Đăng Ký</th>
+                  <th>Số Tiền (VND)</th>
+                  <th>Quy Đổi USD</th>
+                  <th>Phương Thức</th>
+                  <th>Thời Gian</th>
+                </tr>
+              </thead>
+              <tbody id="revenue-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: NGƯỜI DÙNG & QUẢN TRỊ               -->
+      <!-- ========================================== -->
+      <section id="tab-users" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Danh Sách Quản Trị Viên & Khách Hàng</h2>
+            <button class="btn" onclick="openAddUserModal()">+ Thêm Người Dùng</button>
+          </div>
+
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User ID</th>
+                  <th>Họ Tên</th>
+                  <th>Email</th>
+                  <th>Vai Trò</th>
+                  <th>Trạng Thái</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 6: MEDIA CLOUDFLARE R2                 -->
+      <!-- ========================================== -->
+      <section id="tab-media" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Quản Lý Tệp Tin Media (Cloudflare R2 Bucket)</h2>
+          </div>
+          <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">
+            ⚠️ <em>Cơ chế xóa đồng bộ (Synchronous Cleanup): Khi bấm Xóa, file sẽ được xóa sạch trên cả Cơ sở dữ liệu và Cloudflare R2 bucket.</em>
+          </p>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Media ID</th>
+                  <th>Tên Tệp</th>
+                  <th>Định Dạng</th>
+                  <th>Dung Lượng</th>
+                  <th>Liên Kết</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="media-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 7: TIẾN TRÌNH CONVERT                  -->
+      <!-- ========================================== -->
+      <section id="tab-conversions" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Hàng Đợi Chuyển Đổi Tài Liệu (Conversion Queue)</h2>
+            <button class="btn btn-sm" onclick="loadConversions()">🔄 Làm Mới</button>
+          </div>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Job ID</th>
+                  <th>Tệp Gốc</th>
+                  <th>Luồng Convert</th>
+                  <th>Trạng Thái</th>
+                  <th>Tải Xuống</th>
+                </tr>
+              </thead>
+              <tbody id="conversions-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 8: CẤU HÌNH AI PERSONA & KHUNG LUẬT     -->
+      <!-- ========================================== -->
+      <section id="tab-ai-config" class="tab-content" style="display: none;">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">🤖 Quản Trị AI Persona, Câu Chào, Hiển Thị & Khung Luật Hoạt Động</h2>
+              <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                Quản lý tập trung mọi thông số AI kết nối tới Mobile App. Tuyệt đối không hardcode trên ứng dụng di động.
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveAiPersonaConfig()">💾 Lưu Cấu Hình AI</button>
+          </div>
+
+          <div style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+            <!-- Hàng 1: Tên Persona & Trạng thái -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Tên Định Danh AI (Persona Name):</label>
+                <input type="text" id="ai-persona-name" class="form-input" placeholder="NextAI Office Assistant">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Thời Gian Cập Nhật Gần Nhất:</label>
+                <input type="text" id="ai-persona-updated-at" class="form-input" disabled style="opacity: 0.7;">
+              </div>
+            </div>
+
+            <!-- Hàng 2: Câu Chào Khởi Đầu (Greetings) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">🇻🇳 Câu Chào Mặc Định (Tiếng Việt):</label>
+                <textarea id="ai-greeting-vi" class="form-input" rows="4" placeholder="Nhập câu chào tiếng Việt..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🇬🇧 Câu Chào Mặc Định (Tiếng Anh - English):</label>
+                <textarea id="ai-greeting-en" class="form-input" rows="4" placeholder="Enter English greeting..."></textarea>
+              </div>
+            </div>
+
+            <!-- Hàng 3: Phản Hồi Mặc Định & Dự Phòng (Default Responses) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">🇻🇳 Câu Trả Lời Mặc Định / Dự Phòng (Tiếng Việt):</label>
+                <textarea id="ai-default-reply-vi" class="form-input" rows="3" placeholder="Nhập câu trả lời dự phòng..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🇬🇧 Câu Trả Lời Mặc Định / Dự Phòng (Tiếng Anh):</label>
+                <textarea id="ai-default-reply-en" class="form-input" rows="3" placeholder="Enter default fallback response..."></textarea>
+              </div>
+            </div>
+
+            <!-- Hàng 4: Hiển Thị Mặc Định & Placeholder Ô Chat -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Gợi Ý Placeholder Ô Chat (Tiếng Việt):</label>
+                <input type="text" id="ai-placeholder-vi" class="form-input" placeholder="Hỏi AI bất kỳ điều gì...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gợi Ý Placeholder Ô Chat (Tiếng Anh):</label>
+                <input type="text" id="ai-placeholder-en" class="form-input" placeholder="Ask AI anything...">
+              </div>
+            </div>
+
+            <!-- Hàng 5: Danh Sách Gợi Ý Nhanh (Quick Prompts) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Gợi Ý Nhanh Tiếng Việt (Mỗi dòng một gợi ý):</label>
+                <textarea id="ai-quick-prompts-vi" class="form-input" rows="3" placeholder="📝 Tóm tắt tài liệu&#10;🌐 Dịch thuật toàn cầu&#10;🔍 Trích xuất việc cần làm&#10;📊 Phân tích số liệu"></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gợi Ý Nhanh Tiếng Anh (Mỗi dòng một gợi ý):</label>
+                <textarea id="ai-quick-prompts-en" class="form-input" rows="3" placeholder="📝 Summarize Document&#10;🌐 World Translator&#10;🔍 Extract Action Items&#10;📊 Analyze Figures"></textarea>
+              </div>
+            </div>
+
+            <!-- Hàng 6: Khung Luật Hoạt Động AI (System Prompt & Guardrails) -->
+            <div class="form-group">
+              <label class="form-label">⚖️ Khung Luật Hoạt Động & Giới Hạn Của AI (System Prompt & Rule Boundaries):</label>
+              <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                Chỉ định phạm vi chuyên môn, quy định bảo mật, yêu cầu trung thực không bịa đặt số liệu, và từ chối các yêu cầu ngoài nghiệp vụ.
+              </div>
+              <textarea id="ai-system-prompt-rules" class="form-input" rows="7" style="font-family: monospace; font-size: 13px; line-height: 1.5;"></textarea>
+            </div>
+
+            <!-- Hàng 7: Câu Lệnh Tóm Tắt Tự Động Khi Đính Kèm File -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Câu Lệnh Tự Động Tóm Tắt (Tiếng Việt):</label>
+                <input type="text" id="ai-auto-summary-prompt-vi" class="form-input" placeholder="Hãy tóm tắt và phân tích toàn bộ nội dung tệp tài liệu này.">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Câu Lệnh Tự Động Tóm Tắt (Tiếng Anh):</label>
+                <input type="text" id="ai-auto-summary-prompt-en" class="form-input" placeholder="Please summarize and analyze this entire document file.">
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+              <button class="btn btn-primary" onclick="saveAiPersonaConfig()">💾 Lưu Cấu Hình AI</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: THÊM API KEY MỚI                     -->
+  <!-- ========================================== -->
+  <div id="modal-add-key" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 17px; font-weight: 700;">Thêm Khóa API AI Mới</h3>
+      
+      <div class="form-group">
+        <label class="form-label">Nhà Cung Cấp (Provider):</label>
+        <select id="new-key-provider" class="form-select" onchange="autoFillModel()">
+          <option value="gemini">Google Gemini (Gemini 1.5 Flash / Pro)</option>
+          <option value="grok">xAI Grok (Grok-2 / Grok-3)</option>
+          <option value="openai">OpenAI (GPT-4o / GPT-4o-mini)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tên Nhãn Khóa (Key Label):</label>
+        <input type="text" id="new-key-name" class="form-input" placeholder="Ví dụ: Gemini 1.5 Flash Backup Gateway">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Mã API Key:</label>
+        <input type="text" id="new-key-value" class="form-input" placeholder="AIzaSy... hoặc xai-...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tên Model:</label>
+        <input type="text" id="new-key-model" class="form-input" value="gemini-1.5-flash">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Hạn Ngạch Yêu Cầu (Quota):</label>
+        <input type="number" id="new-key-quota" class="form-input" value="1000000">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ghi Chú Mục Đích:</label>
+        <input type="text" id="new-key-note" class="form-input" placeholder="Mục đích sử dụng cho app...">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-add-key')">Hủy</button>
+        <button class="btn" onclick="submitAddApiKey()">Lưu API Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: THÊM USER MỚI                       -->
+  <!-- ========================================== -->
+  <div id="modal-add-user" class="modal-backdrop">
+    <div class="modal-box">
+      <h3 style="font-size: 17px; font-weight: 700;">Thêm Người Dùng / Quản Trị Viên</h3>
+      
+      <div class="form-group">
+        <label class="form-label">Email:</label>
+        <input type="email" id="new-user-email" class="form-input" placeholder="user@nextaitechnology.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Họ và Tên:</label>
+        <input type="text" id="new-user-fullname" class="form-input" placeholder="Nguyễn Văn A">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Vai Trò:</label>
+        <select id="new-user-role" class="form-select">
+          <option value="user">User Thường</option>
+          <option value="manager">Manager Quản Lý</option>
+          <option value="admin">SuperAdmin</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+        <button class="btn btn-secondary" onclick="closeModal('modal-add-user')">Hủy</button>
+        <button class="btn" onclick="submitAddUser()">Tạo Tài Khoản</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/admin-assets/js/admin.js"></script>
+</body>
+</html>

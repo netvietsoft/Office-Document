@@ -1,0 +1,6 @@
+id,device_id,source_filename,source_format,target_format,file_size_bytes,status,download_url,error_message,duration_ms,created_at,completed_at
+job-881920-001,dev-pixel8-001,Quarterly_Report_2026.hwp,hwp,docx,4521900,COMPLETED,https://api.nextaitechnology.com/v1/download/conv_res_881920.docx,,1250,2026-09-06 14:10:00,2026-09-06 14:10:01
+job-881920-002,dev-s24ultra-002,Project_Roadmap_Final.docx,docx,pdf,8912400,COMPLETED,https://api.nextaitechnology.com/v1/download/conv_res_881921.pdf,,1820,2026-09-06 15:22:00,2026-09-06 15:22:02
+job-881920-003,dev-xiaomi14-003,Financial_Statement_Q3.xlsx,xlsx,pdf,3219000,COMPLETED,https://api.nextaitechnology.com/v1/download/conv_res_881922.pdf,,950,2026-09-06 16:05:00,2026-09-06 16:05:01
+job-881920-004,dev-sony1vi-004,Corrupted_Old_Spec.hwp,hwp,docx,152000,FAILED,,Unsupported legacy font table,340,2026-09-06 17:40:00,2026-09-06 17:40:00
+job-881920-005,dev-oppofind-005,Investor_Deck_V3.pptx,pptx,pdf,14820000,PROCESSING,,,,2026-09-06 20:50:00,

@@ -1,0 +1,6 @@
+device_id,user_id,ad_id,platform,os_version,app_version,fcm_token,adjust_token,country,last_active_at,created_at
+dev-pixel8-001,usr-003,38400000-8cf0-11bd-b23e-10b96e400001,android,Android 15 (API 35),2.1.0,fcm_tok_sample_alpha_01,adj_tok_99120,US,2026-09-06 18:30:00,2026-01-15 14:20:00
+dev-s24ultra-002,usr-004,38400000-8cf0-11bd-b23e-10b96e400002,android,Android 14 (API 34),2.1.0,fcm_tok_sample_beta_02,adj_tok_88412,SG,2026-09-06 19:15:00,2026-02-20 11:00:00
+dev-xiaomi14-003,usr-005,38400000-8cf0-11bd-b23e-10b96e400003,android,Android 14 (API 34),2.0.8,fcm_tok_sample_gamma_03,adj_tok_77192,VN,2026-09-05 22:10:00,2026-03-01 16:45:00
+dev-sony1vi-004,usr-006,38400000-8cf0-11bd-b23e-10b96e400004,android,Android 15 (API 35),2.1.0,fcm_tok_sample_delta_04,adj_tok_66231,DE,2026-09-06 15:40:00,2026-03-10 09:15:00
+dev-oppofind-005,,38400000-8cf0-11bd-b23e-10b96e400005,android,Android 13 (API 33),2.1.0,fcm_tok_sample_epsilon_05,adj_tok_55109,JP,2026-09-06 20:10:00,2026-04-12 10:05:00

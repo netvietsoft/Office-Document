@@ -1,0 +1,7 @@
+event_time,event_name,device_id,country,app_version,doc_type,session_duration_sec,is_vip,extra_payload
+2026-09-06 18:30:15,read_file,dev-pixel8-001,US,2.1.0,word,420,1,{"pages_count":12}
+2026-09-06 18:45:00,chat_ai,dev-pixel8-001,US,2.1.0,word,180,1,{"action":"summarize"}
+2026-09-06 19:15:30,read_file,dev-s24ultra-002,SG,2.1.0,pdf,650,1,{"pages_count":34}
+2026-09-06 20:00:10,read_file,dev-xiaomi14-003,VN,2.0.8,excel,310,0,{"sheets_count":4}
+2026-09-06 20:05:22,paywall_view,dev-xiaomi14-003,VN,2.0.8,,15,0,{"trigger":"export_pdf"}
+2026-09-06 20:10:05,read_file,dev-oppofind-005,JP,2.1.0,hwp,540,1,{"converted_local":true}

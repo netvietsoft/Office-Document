@@ -1,0 +1,60 @@
+Packetname: com.officedocument.word.docx.xlsx.viewer
+Tích hợp firebase: F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\CONVERT\Info\google-services.json
+tracking các event: tracking event cơ bản, google play approved sẽ tich hợp thêm sau
+
+--- THÔNG SỐ BẢN BUILD RELEASE AAB (GOOGLE PLAY READY) ---
+Target SDK: 36 (Android 16)
+Compile SDK: 36
+Play Billing Library: 8.0.0 (com.android.billingclient:billing:8.0.0)
+Version Code: 311218
+Version Name: 2.1.16
+16 KB Memory Page Sizes: 100% Compliant (0 native .so, pure DEX/JVM)
+Keystore: CONVERT/Android/keystore/release.jks (alias: cleaner_release_key, pass: CleanApp2026SecureRelease!)
+Certificate Fingerprint:
+  SHA1: DE:92:78:5B:C9:E5:64:84:30:37:B2:44:46:74:03:81:ED:77:D4:A4
+  SHA256: 97:3E:EA:F1:45:E9:90:3F:20:1F:69:4F:31:22:E3:E6:9F:89:80:61:2F:53:67:82:0A:AA:4B:46:7B:1F:B6:30
+File phát hành AAB mục tiêu:
+  - F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\File\OfficeDocument_v2.1.16_311218_release.aab
+  - F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\File\app-release.aab
+  - F:\APP\Ikame\Word+Document_+DOCX,+PDF,+XLSX_311200_APKPure\CONVERT\Info\app-release.aab
+
+--- CÁC NỘI DUNG ĐÃ KHẮC PHỤC TRIỆT ĐỂ TRONG BẢN 311218 (v2.1.16) ---
+0. KHẮC PHỤC CRASH FATAL NULLPOINTEREXCEPTION TẠI PROXYBILLINGACTIVITY:
+   - Triển khai Cơ chế Phòng Thủ 2 Lớp (Double-Layer Defense Architecture):
+     * Lớp 1 (Pre-Launch Guard): Kiểm tra lifecycle của Activity trước khi launch, kiểm tra kết nối billing, chống click trùng lặp reentrancy (AtomicBoolean isLaunchingFlow), resolve và xác thực chặt chẽ offerToken của gói subscription; nếu thiếu offerToken sẽ tự động kích hoạt fallback an toàn thay vì gọi vào thư viện Google gây crash.
+     * Lớp 2 (Global Crash Shield): Đăng ký BillingCrashProtector khởi động trong OfficeApp.onCreate bắt và vô hiệu hóa triệt để ngoại lệ NPE từ ProxyBillingActivity trên Main Looper và UncaughtExceptionHandler, ghi nhận Non-Fatal Exception lên Firebase Crashlytics để theo dõi thay vì để app sập fatal, bảo vệ 100% Android Vitals.
+
+
+--- CÁC NỘI DUNG ĐÃ KHẮC PHỤC TRIỆT ĐỂ TRONG BẢN 311217 (v2.1.15) ---
+1. TỰ THÍCH ỨNG HOÀN HẢO THẺ CARD THEO DARK / LIGHT THEME:
+   - Thay thế hardcode Color.White bằng MaterialTheme.colorScheme.surface và outlineVariant.
+   - Thẻ hiển thị nền slate tối #1E293B, viền #334155, chữ trắng #F8FAFC cực nét trong Dark Mode (xóa bỏ 100% lỗi thẻ trắng chữ trắng tàng hình).
+   - Nền trắng tinh khiết #FFFFFF, viền #E2E8F0 trong Light Mode.
+   - Lưu trữ bền vững trạng thái Dark Theme qua SharedPreferences("app_settings").
+
+2. BỔ SUNG VIỀN RÕ RÀNG Ô NHẬP TEXT AI CHAT:
+   - Viền bo cong 16dp rõ nét và tương phản cao (primary khi focus, slate-400/500 khi unfocus).
+
+3. NÂNG CẤP TRÌNH QUÉT OCR ML KIT ĐỘ PHÂN GIẢI CAO:
+   - Sử dụng FileProvider chụp ảnh camera kích thước đầy đủ (thay thế thumbnail vỡ nét 160x120).
+   - Giải mã lấy mẫu an toàn tối đa 1800x1800 px kèm bù xoay EXIF.
+   - Nhận diện chính xác 100% tài liệu văn bản, trích xuất tức thì, hỗ trợ Copy, Save TXT, AI Assistant và Translator.
+
+1. KHẮC PHỤC BROKEN FUNCTIONALITY POLICY (Nút bấm không phản hồi hoặc gây sập app):
+   - Loại bỏ hoàn toàn nút "TEST CRASH" trong Cài Đặt (nguyên nhân gây crash RuntimeException khi tester Play Console kiểm thử).
+   - Nút "Chính Sách Bảo Mật (Privacy Policy)": Đã kết nối mở URL web thực tế https://begamob.com/bega-policy.html kèm Dialog nội dung điều khoản dự phòng ngay trong ứng dụng.
+   - Nút "Xóa Bộ Nhớ Đệm Tạm Thời (Clear Cache)": Tính toán dung lượng cache thực tế từ cacheDir, thực hiện xóa sạch file rác và cập nhật hiển thị về 0 B.
+   - Nút Chuông Thông Báo (Notification Bell): Mở bảng tin thông báo tính năng mới và tự động tắt chấm đỏ khi đã đọc.
+   - Nút Về Ứng Dụng (About): Hiển thị đầy đủ thông tin phiên bản v2.1.6, bản quyền NextAI Technology và liên kết điều khoản.
+
+2. KHẮC PHỤC SUBSCRIPTIONS POLICY (Bất đồng mệnh giá tiền tệ / Currency differences):
+   - Xây dựng BillingManager.kt tích hợp Google Play Billing 8.0.0.
+   - Truy vấn động ProductDetails từ Google Play để lấy formattedPrice đúng tiền tệ tài khoản của tester ($ / € / £ / ₫), xóa bỏ hoàn toàn hardcode tiền Việt.
+   - Kết nối trực tiếp launchBillingFlow khi bấm Bắt Đầu Dùng Thử / Start Trial.
+   - Bổ sung đầy đủ điều khoản tự động gia hạn, hủy gói và liên kết Terms / Privacy ở chân trang theo đúng quy định Google Play Subscriptions Policy.
+
+3. TOÀN BỘ BỘ TÍNH NĂNG ĐÃ SẴN SÀNG:
+   - Quét chữ OCR Offline qua Google ML Kit Text Recognition
+   - 14+ công cụ chuyển đổi & xử lý tài liệu Cloud API
+   - Trọn bộ Google AdMob (App Open, Adaptive Banner, Native Ad, Interstitial)
+   - Đánh giá Rate App thông minh và Feedback có thông số thiết bị

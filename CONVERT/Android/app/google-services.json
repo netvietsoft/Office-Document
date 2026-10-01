@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "835484781784",
+    "project_id": "office-document-ed484",
+    "storage_bucket": "office-document-ed484.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:835484781784:android:75f31070eda18fd0079bad",
+        "android_client_info": {
+          "package_name": "com.officedocument.word.docx.xlsx.viewer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHEBlAfP9tpYZ6hjjUZBSoOpwJrsl0MX0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,5 @@
+order_id,device_id,user_id,product_id,purchase_token,purchase_state,amount,currency,purchase_time,expiry_time
+GPA.3301-4492-1102-88401,dev-pixel8-001,usr-003,office_sub_yearly_best,p_tok_sec_hash_0019283719,ACTIVE,39.99,USD,2026-01-15 14:20:00,2027-01-15 14:20:00
+GPA.3302-8819-9941-22910,dev-s24ultra-002,usr-004,office_sub_monthly,p_tok_sec_hash_0028192039,ACTIVE,9.99,USD,2026-08-20 11:00:00,2026-09-20 11:00:00
+GPA.3303-1192-5501-77182,dev-sony1vi-004,usr-006,office_sub_yearly_best,p_tok_sec_hash_0038192019,ACTIVE,39.99,USD,2026-03-10 09:15:00,2027-03-10 09:15:00
+GPA.3304-9921-3310-44918,dev-oppofind-005,,office_sub_weekly_trial,p_tok_sec_hash_0049281729,ACTIVE,4.99,USD,2026-09-03 10:05:00,2026-09-10 10:05:00

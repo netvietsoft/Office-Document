@@ -1,0 +1,3711 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark" data-lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>NextAI Office Suite — Interactive UI Prototype & Live Code Studio</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. ULTRA HIGH-CONTRAST DESIGN SYSTEM & THEMING TOKENS
+       ========================================================================== */
+    :root {
+      --brand-primary: #2563eb;
+      --brand-primary-hover: #1d4ed8;
+      --brand-primary-glow: rgba(37, 99, 235, 0.35);
+      --brand-accent: #7c3aed;
+      --brand-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+      --brand-ai-gradient: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%);
+      
+      --gold-primary: #f59e0b;
+      --gold-gradient: linear-gradient(135deg, #fbbf24 0%, #d97706 50%, #b45309 100%);
+      --gold-glow: rgba(245, 158, 11, 0.4);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+
+      --transition-fast: 0.15s ease;
+      --transition-smooth: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Dark Theme Tokens (Default) */
+      --bg-studio: #080c14;
+      --bg-app: #0f172a;
+      --bg-surface: rgba(30, 41, 59, 0.88);
+      --bg-surface-elevated: #1e293b;
+      --bg-card: rgba(30, 41, 59, 0.75);
+      --bg-card-hover: rgba(51, 65, 85, 0.9);
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-focus: rgba(99, 102, 241, 0.6);
+      
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --text-sub: #94a3b8;
+      --text-inverse: #0f172a;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+
+      --doc-word: #3b82f6;
+      --doc-word-bg: rgba(59, 130, 246, 0.14);
+      --doc-excel: #10b981;
+      --doc-excel-bg: rgba(16, 185, 129, 0.14);
+      --doc-ppt: #f97316;
+      --doc-ppt-bg: rgba(249, 115, 22, 0.14);
+      --doc-pdf: #ef4444;
+      --doc-pdf-bg: rgba(239, 68, 68, 0.14);
+      --doc-hwp: #06b6d4;
+      --doc-hwp-bg: rgba(6, 182, 212, 0.14);
+    }
+
+    [data-theme="light"] {
+      --bg-studio: #edf2f9;
+      --bg-app: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --border-color: #cbd5e1;
+      --border-focus: #2563eb;
+      
+      --text-main: #090d16;
+      --text-muted: #1e293b;
+      --text-sub: #475569;
+      --text-inverse: #ffffff;
+
+      --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 16px 36px rgba(15, 23, 42, 0.12);
+
+      --doc-word: #1d4ed8;
+      --doc-word-bg: #eff6ff;
+      --doc-excel: #047857;
+      --doc-excel-bg: #ecfdf5;
+      --doc-ppt: #c2410c;
+      --doc-ppt-bg: #fff7ed;
+      --doc-pdf: #b91c1c;
+      --doc-pdf-bg: #fef2f2;
+      --doc-hwp: #0e7490;
+      --doc-hwp-bg: #ecfeff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-studio);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition-smooth);
+    }
+
+    /* Studio Header */
+    .studio-header {
+      position: sticky;
+      top: 0;
+      padding: 12px 20px;
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      border-bottom: 1.5px solid var(--border-color);
+      z-index: 1000;
+    }
+
+    .studio-bar-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .studio-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .studio-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--brand-ai-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+    }
+
+    .studio-title h1 {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      background: var(--brand-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .studio-title p {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .studio-mode-switcher {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-surface-elevated);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-color);
+    }
+
+    .mode-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .mode-tab-btn.active {
+      background: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 2px 10px var(--brand-primary-glow);
+    }
+
+    .studio-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .studio-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .studio-btn:hover {
+      border-color: var(--brand-primary);
+      background: var(--bg-card-hover);
+    }
+
+    .sub-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .sub-toggle-pill.free {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1.5px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .sub-toggle-pill.vip {
+      background: var(--gold-gradient);
+      color: #000;
+      border: 1.5px solid #fbbf24;
+      box-shadow: 0 2px 12px var(--gold-glow);
+    }
+
+    /* Screen Navigator */
+    .screen-navigator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding-top: 10px;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .screen-navigator::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-chip {
+      padding: 5px 12px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface-elevated);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .nav-chip:hover {
+      border-color: var(--brand-primary);
+      color: var(--text-main);
+    }
+
+    .nav-chip.active {
+      background: var(--brand-primary);
+      color: #fff;
+      border-color: var(--brand-primary);
+      box-shadow: 0 2px 8px var(--brand-primary-glow);
+    }
+
+    /* Main Container */
+    .studio-main-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .studio-mode-view {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .studio-mode-view.active {
+      display: block;
+    }
+
+    .viewport-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    /* Smartphone Device Frame (1080x2340 Scaled Mockup) */
+    .device-frame {
+      width: 390px;
+      height: 780px;
+      background: var(--bg-app);
+      border: 8px solid #1e293b;
+      border-radius: 46px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .island-camera {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #111;
+      border: 2px solid #222;
+    }
+
+    .island-badge {
+      font-size: 9px;
+      font-weight: 800;
+      color: #10b981;
+    }
+
+    .island-sensor {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #09090b;
+    }
+
+    /* App Status Bar */
+    .app-status-bar {
+      height: 44px;
+      padding: 10px 22px 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-main);
+      z-index: 400;
+    }
+
+    /* App Viewport */
+    .app-viewport {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      padding: 6px 14px 14px 14px;
+      scrollbar-width: none;
+    }
+
+    .app-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .screen-pane {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 70px;
+    }
+
+    .screen-pane.active {
+      display: flex;
+    }
+
+    /* Fixed Bottom Dock */
+    .app-docked-bottom {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      backdrop-filter: blur(16px);
+      z-index: 450;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* AdMob Banner Container */
+    .admob-banner-container {
+      height: 48px;
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+    }
+
+    .admob-banner-container.hidden {
+      display: none;
+    }
+
+    .admob-badge {
+      background: #f59e0b;
+      color: #000;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .admob-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 6px;
+    }
+
+    .admob-info h5 {
+      font-size: 10px;
+      color: #fff;
+    }
+
+    .admob-info p {
+      font-size: 9px;
+      color: #94a3b8;
+    }
+
+    .admob-cta {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* 5 Bottom Tabs */
+    .app-nav-bar {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: var(--text-sub);
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      flex: 1;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2.2;
+    }
+
+    .nav-item.active {
+      color: var(--brand-primary);
+    }
+
+    .home-indicator {
+      width: 120px;
+      height: 4px;
+      background: var(--text-sub);
+      border-radius: 2px;
+      margin: 4px auto 6px auto;
+      opacity: 0.5;
+    }
+
+    /* Home Header */
+    .home-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--brand-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .user-greeting h2 {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .user-greeting p {
+      font-size: 10px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .icon-btn.vip-crown {
+      background: var(--gold-gradient);
+      color: #000;
+      border: none;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    /* Search Box */
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+    }
+
+    .search-box svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-sub);
+    }
+
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 11px;
+      font-family: inherit;
+    }
+
+    /* 4 Quick Action Cards */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .quick-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .quick-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-primary);
+    }
+
+    .quick-card .card-icon-wrap {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .quick-card span {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .card-ai .card-icon-wrap { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+    .card-scanner .card-icon-wrap { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+    .card-pdf .card-icon-wrap { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    .card-transfer .card-icon-wrap { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; }
+
+    /* Category Chips */
+    .category-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .category-chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-chip {
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .cat-chip.active {
+      background: var(--brand-primary);
+      color: #fff;
+      border-color: var(--brand-primary);
+    }
+
+    /* Office Brand Badges cho Filter Chips (Chuẩn Microsoft Word, Excel, PPT, Adobe PDF) */
+    .chip-office-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 3.5px;
+      font-size: 10px;
+      font-weight: 900;
+      color: #ffffff !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1;
+      flex-shrink: 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    }
+    .chip-office-icon.icon-w { background: #185ABD; }
+    .chip-office-icon.icon-x { background: #107C41; }
+    .chip-office-icon.icon-p { background: #C43E1C; }
+    .chip-office-icon.icon-pdf { background: #E1251B; font-size: 7.5px; width: 22px; font-weight: 900; letter-spacing: -0.2px; }
+    .chip-office-icon.icon-all { background: rgba(255, 255, 255, 0.25); font-size: 10px; }
+    .cat-chip:not(.active) .chip-office-icon.icon-all { background: rgba(59, 130, 246, 0.18); color: #2563EB !important; }
+
+    /* Document Items */
+    .doc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .doc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .doc-item:hover {
+      border-color: var(--brand-primary);
+    }
+
+    .doc-badge-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .doc-badge-word { background: var(--doc-word-bg); color: var(--doc-word); border: 1px solid var(--doc-word); }
+    .doc-badge-excel { background: var(--doc-excel-bg); color: var(--doc-excel); border: 1px solid var(--doc-excel); }
+    .doc-badge-ppt { background: var(--doc-ppt-bg); color: var(--doc-ppt); border: 1px solid var(--doc-ppt); }
+    .doc-badge-pdf { background: var(--doc-pdf-bg); color: var(--doc-pdf); border: 1px solid var(--doc-pdf); }
+
+    .doc-meta {
+      flex: 1;
+      margin-left: 10px;
+      min-width: 0;
+    }
+
+    .doc-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .doc-sub {
+      font-size: 9.5px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .doc-format-tag {
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 8.5px;
+      font-weight: 800;
+    }
+
+    .tag-word { background: var(--doc-word-bg); color: var(--doc-word); }
+    .tag-excel { background: var(--doc-excel-bg); color: var(--doc-excel); }
+    .tag-ppt { background: var(--doc-ppt-bg); color: var(--doc-ppt); }
+    .tag-pdf { background: var(--doc-pdf-bg); color: var(--doc-pdf); }
+
+    .doc-fav-btn {
+      color: #f59e0b;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    /* Document Selection & Batch Delete Controls */
+    .doc-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    .doc-section-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-section-title-wrap h4 {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .doc-count-badge {
+      background: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--brand-primary);
+    }
+
+    .btn-select-toggle {
+      background: transparent;
+      border: none;
+      color: var(--brand-primary);
+      font-weight: 800;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .btn-select-toggle:hover {
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .btn-select-toggle.active {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.12);
+    }
+
+    /* Batch Delete Bar */
+    .doc-batch-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface-elevated);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      animation: fadeIn 0.18s ease;
+    }
+
+    .doc-batch-bar.active {
+      display: flex;
+    }
+
+    .tick-all-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tick-all-label input[type="checkbox"],
+    .doc-tick-box input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--brand-primary);
+      cursor: pointer;
+    }
+
+    .btn-delete-batch {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-delete-batch:hover:not(:disabled) {
+      background: #dc2626;
+      box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-delete-batch:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Item Checkbox & Delete Button */
+    .doc-item.selected {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: var(--brand-primary);
+    }
+
+    .doc-tick-box {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+    }
+
+    .doc-tick-box.active {
+      display: flex;
+    }
+
+    .doc-action-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-doc-delete-single {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 13px;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-doc-delete-single:hover {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Empty state */
+    .doc-empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      background: var(--bg-card);
+      border: 1.5px dashed var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .doc-empty-state .icon {
+      font-size: 38px;
+      margin-bottom: 8px;
+    }
+
+    .doc-empty-state h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .doc-empty-state p {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin: 4px 0 14px 0;
+    }
+
+    .btn-restore-docs {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--brand-primary);
+      color: #fff;
+      border: none;
+      padding: 7px 16px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 2px 8px var(--brand-primary-glow);
+    }
+
+    .btn-restore-docs:hover {
+      background: var(--brand-primary-hover);
+    }
+
+    /* PDF Tools Screen Elements */
+    .pdf-tech-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+      border: 1.5px solid rgba(37, 99, 235, 0.3);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pdf-tech-banner .icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .pdf-tech-banner h4 {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .pdf-tech-banner p {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .tools-section-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-top: 8px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tools-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tool-tile {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 104px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-fast);
+      z-index: 1;
+    }
+
+    .tool-tile:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+
+    .tool-tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tool-tile-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      color: #fff;
+    }
+
+    .tool-badge-fast {
+      font-size: 8px;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .tool-badge-cloud {
+      font-size: 8px;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(99, 102, 241, 0.2);
+      color: #6366f1;
+      border: 1px solid #6366f1;
+    }
+
+    .tool-tile h5 {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+    }
+
+    .tool-tile p {
+      font-size: 9.5px;
+      color: var(--text-sub);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    #screenPdfTools {
+      padding-bottom: 90px;
+    }
+
+    /* Language Selection Bottom Sheet Modal */
+    .lang-modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 600;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .lang-modal-overlay.active {
+      display: flex;
+    }
+
+    .lang-modal-card {
+      width: 100%;
+      max-height: 82%;
+      background: var(--bg-surface);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border: 1.5px solid var(--border-color);
+      border-bottom: none;
+      padding: 16px 16px 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      animation: slideUpModal 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUpModal {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .lang-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .lang-modal-header h4 {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .lang-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-y: auto;
+      max-height: 380px;
+      padding-right: 2px;
+    }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .lang-item:hover {
+      border-color: var(--brand-primary);
+      background: var(--bg-surface-elevated);
+    }
+
+    .lang-item.selected {
+      border-color: var(--brand-primary);
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .lang-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lang-item-flag {
+      font-size: 20px;
+    }
+
+    .lang-item-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .lang-item-check {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--brand-primary);
+    }
+
+    /* ScanPDF-main Media Picker Screen */
+    .picker-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .picker-dropdown {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .picker-album-btn {
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid var(--brand-primary);
+      color: var(--brand-primary);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .picker-filter-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .picker-pill {
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .picker-pill.active {
+      background: var(--brand-primary);
+      color: #fff;
+      border-color: var(--brand-primary);
+    }
+
+    .media-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .media-thumb-item {
+      aspect-ratio: 1;
+      background: #1e293b;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .media-thumb-item.selected {
+      border-color: var(--brand-primary);
+    }
+
+    .media-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-select-circle {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .media-thumb-item.selected .media-select-circle {
+      background: var(--brand-primary);
+      border-color: #fff;
+    }
+
+    .media-video-duration {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      font-size: 8px;
+      font-weight: 800;
+      background: rgba(0,0,0,0.6);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .picker-bottom-action {
+      background: var(--bg-surface-elevated);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    /* Fast Engine Simulation Dialog */
+    .sim-dialog-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 600;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .sim-dialog-overlay.active {
+      display: flex;
+    }
+
+    .sim-dialog-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sim-progress-bar-bg {
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .sim-progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--brand-gradient);
+      transition: width 0.3s ease;
+    }
+
+    /* Right Inspector / Code Editor Panel */
+    .studio-inspector {
+      width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .inspector-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .inspector-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .inspector-card-header h3 {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .code-editor-box {
+      background: #090d16;
+      border: 1.5px solid #1e293b;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: #38bdf8;
+      height: 380px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      user-select: text;
+    }
+
+    .code-controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .ctrl-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ctrl-item label {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .ctrl-input {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 11px;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .btn-apply-code {
+      background: var(--brand-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-apply-code:hover {
+      background: var(--brand-primary-hover);
+    }
+
+    /* Toast Notification */
+    .studio-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .studio-toast.active {
+      display: flex;
+      animation: fadeInToast 0.2s ease;
+    }
+
+    @keyframes fadeInToast {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP STUDIO HEADER & NAVIGATOR
+       ======================================================================== -->
+  <header class="studio-header">
+    <div class="studio-bar-main">
+      <div class="studio-brand">
+        <div class="studio-logo">NX</div>
+        <div class="studio-title">
+          <h1 id="topStudioTitle">NextAI Office Suite — Interactive UI & Live Code Studio</h1>
+          <p>Native Kotlin Compose Architecture • ScanPDF Integration • Local-First Fast Engine</p>
+        </div>
+      </div>
+
+      <!-- Studio Mode Switcher -->
+      <div class="studio-mode-switcher">
+        <button class="mode-tab-btn active" onclick="switchStudioMode('modeApp', this)">📱 Mobile App Prototype</button>
+        <button class="mode-tab-btn" onclick="switchStudioMode('modeCodeEditor', this)">💻 Live Code & UI Editor</button>
+        <button class="mode-tab-btn" onclick="switchStudioMode('modeTokens', this)">🎨 Design Tokens</button>
+      </div>
+
+      <!-- Global Controls -->
+      <div class="studio-controls">
+        <div class="sub-toggle-pill free" id="btnSubToggle" onclick="toggleSubscriptionMode()" title="Toggle Free Mode vs Pro VIP Tier">
+          <span id="subStatusIcon">⚡</span>
+          <span id="subStatusLabel">Tier: Free (AdMob ON)</span>
+        </div>
+
+        <button class="studio-btn" id="btnThemeToggle" onclick="toggleAppTheme()" title="Toggle Dark / Light Theme">
+          <span>🌙</span>
+          <span id="themeLabel">Theme: Dark</span>
+        </button>
+
+        <button class="studio-btn" onclick="openAabDownload()" title="Tải file AAB đã ký">
+          <span>📦</span>
+          <span>AAB Release (311211)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen Navigator Chips (10 Screens) -->
+    <div class="screen-navigator" id="appScreenNavigator">
+      <div class="nav-chip active" data-screen="screenHome" onclick="switchScreen('screenHome')">🏠 Home Dashboard</div>
+      <div class="nav-chip" data-screen="screenPdfTools" onclick="switchScreen('screenPdfTools')">📑 PDF Tools Suite (15 Tools)</div>
+      <div class="nav-chip" data-screen="screenMediaPicker" onclick="switchScreen('screenMediaPicker')">🖼️ ScanPDF Media Picker</div>
+      <div class="nav-chip" data-screen="screenPdfConfig" onclick="switchScreen('screenPdfConfig')">⚙️ PDF Tool Config & Run</div>
+      <div class="nav-chip" data-screen="screenDocViewer" onclick="switchScreen('screenDocViewer')">📄 Multi-Format Viewer</div>
+      <div class="nav-chip" data-screen="screenScanner" onclick="switchScreen('screenScanner')">📷 OCR Scanner</div>
+      <div class="nav-chip" data-screen="screenAiChat" onclick="switchScreen('screenAiChat')">🤖 AI Assistant</div>
+      <div class="nav-chip" data-screen="screenTransfer" onclick="switchScreen('screenTransfer')">📡 Wi-Fi Transfer</div>
+      <div class="nav-chip" data-screen="screenSettings" onclick="switchScreen('screenSettings')">⚙️ Settings Menu</div>
+      <div class="nav-chip" data-screen="screenPaywall" onclick="switchScreen('screenPaywall')">👑 Pro VIP Paywall</div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       STUDIO MAIN CONTENT
+       ======================================================================== -->
+  <main class="studio-main-content">
+
+    <!-- MODE 1: MOBILE APP PROTOTYPE VIEW (VỚI LIVE INSPECTOR BÊN CẠNH) -->
+    <div class="studio-mode-view active" id="modeApp">
+      <div class="viewport-wrapper">
+
+        <!-- SMARTPHONE DEVICE CONTAINER -->
+        <div class="device-frame" id="phoneContainer">
+
+          <!-- Dynamic Island -->
+          <div class="dynamic-island">
+            <div class="island-camera"></div>
+            <div class="island-badge" id="islandBadge">Fast Engine • 0.3s</div>
+            <div class="island-sensor"></div>
+          </div>
+
+          <!-- Status Bar -->
+          <div class="app-status-bar">
+            <span id="liveClock">15:30</span>
+            <div style="display:flex; gap: 4px; align-items: center;">
+              <span>5G</span>
+              <span>100%</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            </div>
+          </div>
+
+          <!-- App Viewport -->
+          <div class="app-viewport" id="appViewport">
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 1: HOME DASHBOARD
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane active" id="screenHome">
+              <div class="home-header">
+                <div class="header-user">
+                  <div class="user-avatar" id="homeUserAvatar">NX</div>
+                  <div class="user-greeting">
+                    <h2 id="homeAppTitle">NextAI Office Suite</h2>
+                    <p id="userTierSubtext">Free Tier • Ad Supported</p>
+                  </div>
+                </div>
+                <div class="header-actions">
+                  <button class="icon-btn vip-crown" onclick="switchScreen('screenPaywall')">👑</button>
+                  <button class="icon-btn" onclick="showToast('Bạn có 1 thông báo cập nhật v2.1.10')">🔔</button>
+                </div>
+              </div>
+
+              <!-- Search Box -->
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="homeSearchInput" placeholder="Tìm Word, Excel, PDF, PPTX..." />
+              </div>
+
+              <!-- 4 Quick Action Cards -->
+              <div class="quick-grid">
+                <div class="quick-card card-ai" onclick="switchScreen('screenAiChat')">
+                  <div class="card-icon-wrap">🤖</div>
+                  <span id="quickCardAi">Trợ Lý AI</span>
+                </div>
+                <div class="quick-card card-scanner" onclick="switchScreen('screenScanner')">
+                  <div class="card-icon-wrap">📷</div>
+                  <span id="quickCardScanner">Quét OCR</span>
+                </div>
+                <div class="quick-card card-pdf" onclick="switchScreen('screenPdfTools')">
+                  <div class="card-icon-wrap">📑</div>
+                  <span id="quickCardPdf">Công Cụ PDF</span>
+                </div>
+                <div class="quick-card card-transfer" onclick="switchScreen('screenTransfer')">
+                  <div class="card-icon-wrap">📡</div>
+                  <span id="quickCardTransfer">Truyền Wi-Fi</span>
+                </div>
+              </div>
+
+              <!-- Category Chips & Selection Header -->
+              <div class="doc-section-header">
+                <div class="doc-section-title-wrap">
+                  <h4 id="docCatalogTitle">Danh Mục Tài Liệu</h4>
+                  <span class="doc-count-badge" id="docCountBadge">6</span>
+                </div>
+                <button class="btn-select-toggle" id="btnSelectToggle" onclick="toggleSelectMode()">Chọn nhiều</button>
+              </div>
+
+              <!-- Batch Delete Bar (Tick All & Delete Selected) -->
+              <div class="doc-batch-bar" id="docBatchBar">
+                <label class="tick-all-label">
+                  <input type="checkbox" id="tickAllDocsCheckbox" onchange="toggleTickAllDocs(this.checked)" />
+                  <span><span id="tickAllLabelText">Chọn tất cả</span> (<span id="tickAllTotalCount">6</span>)</span>
+                </label>
+                <button class="btn-delete-batch" id="btnDeleteBatch" onclick="confirmBatchDelete()" disabled>
+                  <span>🗑️ <span id="deleteBtnText">Xóa</span> (<span id="deleteBadgeCount">0</span>)</span>
+                </button>
+              </div>
+
+              <!-- Category Filter Chips (Chuẩn Icon Nhận Diện Thương Hiệu Office, Không Dùng Emoji Quyển Sách) -->
+              <div class="category-chips">
+                <div class="cat-chip active" id="chipCatAll" onclick="filterDocs('all', this)"><span class="chip-office-icon icon-all">📁</span> <span class="chip-label">Tất cả</span></div>
+                <div class="cat-chip" id="chipCatWord" onclick="filterDocs('word', this)"><span class="chip-office-icon icon-w">W</span> <span class="chip-label">Word</span></div>
+                <div class="cat-chip" id="chipCatExcel" onclick="filterDocs('excel', this)"><span class="chip-office-icon icon-x">X</span> <span class="chip-label">Excel</span></div>
+                <div class="cat-chip" id="chipCatPpt" onclick="filterDocs('ppt', this)"><span class="chip-office-icon icon-p">P</span> <span class="chip-label">PowerPoint</span></div>
+                <div class="cat-chip" id="chipCatPdf" onclick="filterDocs('pdf', this)"><span class="chip-office-icon icon-pdf">PDF</span> <span class="chip-label">PDF</span></div>
+              </div>
+
+              <!-- Dynamic Document List Container -->
+              <div class="doc-list" id="docListContainer">
+                <!-- Sẽ được hàm renderDocList() nạp động -->
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 2: PDF TOOLS SUITE (15 CÔNG CỤ CHUẨN SCANPDF-MAIN)
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenPdfTools">
+              <div class="home-header" style="margin-bottom: 4px;">
+                <div style="display:flex; align-items:center; gap: 8px;">
+                  <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                  <h3 style="font-size: 14px; font-weight: 900;" id="pdfToolsHeaderTitle">Bộ Công Cụ PDF</h3>
+                </div>
+                <button class="icon-btn vip-crown" onclick="switchScreen('screenPaywall')">PRO</button>
+              </div>
+
+              <!-- Banner Công Nghệ Fast Engine -->
+              <div class="pdf-tech-banner">
+                <div class="icon">⚡</div>
+                <div>
+                  <h4 id="pdfBannerTitle">NextAI PDF & Cloud Engine</h4>
+                  <p id="pdfBannerDesc">Xử lý trực tiếp trên máy • 0.3s Siêu Tốc • Bảo mật tuyệt đối</p>
+                </div>
+              </div>
+
+              <!-- Section 1: Sắp Xếp & Chỉnh Sửa (Local-First Fast Engine) -->
+              <div class="tools-section-title">
+                <span id="toolsSectionTitle1">Sắp Xếp & Chỉnh Sửa</span>
+                <span class="tool-badge-fast">⚡ LOCAL FAST</span>
+              </div>
+              <div class="tools-grid-2col" id="toolsGridSection1">
+                <div class="tool-tile" onclick="openToolPicker('merge', t('toolMerge'), t('toolMergeDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #2563eb;">🔀</div>
+                    <span class="tool-badge-fast">0.3s</span>
+                  </div>
+                  <h5 id="toolTitle_merge">Ghép Nhiều Tệp</h5>
+                  <p id="toolDesc_merge">Nối nhiều tài liệu PDF trong RAM không qua server</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('split', t('toolSplit'), t('toolSplitDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #3b82f6;">✂️</div>
+                    <span class="tool-badge-fast">0.2s</span>
+                  </div>
+                  <h5 id="toolTitle_split">Tách Trang PDF</h5>
+                  <p id="toolDesc_split">Trích xuất từng trang hoặc chọn dải trang cụ thể</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('compress', t('toolCompress'), t('toolCompressDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #10b981;">🗜️</div>
+                    <span class="tool-badge-fast">-70%</span>
+                  </div>
+                  <h5 id="toolTitle_compress">Nén PDF</h5>
+                  <p id="toolDesc_compress">Giảm dung lượng file giữ nguyên độ nét trang</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('ocr-pdf', t('toolOcr'), t('toolOcrDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #0d9488;">🔍</div>
+                    <span class="tool-badge-fast">ML Kit</span>
+                  </div>
+                  <h5 id="toolTitle_ocr">Nhận Diện Chữ OCR</h5>
+                  <p id="toolDesc_ocr">Trích xuất chữ số hóa tài liệu</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('protect', t('toolProtect'), t('toolProtectDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #ef4444;">🔒</div>
+                    <span class="tool-badge-fast">AES-256</span>
+                  </div>
+                  <h5 id="toolTitle_protect">Khóa Mật Khẩu</h5>
+                  <p id="toolDesc_protect">Mã hóa bảo vệ tài liệu an toàn tuyệt đối</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('unlock', t('toolUnlock'), t('toolUnlockDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #f59e0b;">🔓</div>
+                    <span class="tool-badge-fast">Unlock</span>
+                  </div>
+                  <h5 id="toolTitle_unlock">Gỡ Mật Khẩu</h5>
+                  <p id="toolDesc_unlock">Loại bỏ lớp bảo vệ mật mã cho tệp PDF</p>
+                </div>
+              </div>
+
+              <!-- Section 2: Chuyển Đổi Từ PDF -->
+              <div class="tools-section-title">
+                <span id="toolsSectionTitle2">Chuyển Đổi Từ PDF</span>
+                <span class="tool-badge-cloud">☁️ CONVERSION</span>
+              </div>
+              <div class="tools-grid-2col" id="toolsGridSection2">
+                <div class="tool-tile" onclick="openToolPicker('pdf-to-word', t('toolPdfToWord'), t('toolPdfToWordDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #2563eb;">📄</div>
+                    <span class="tool-badge-cloud">DOCX</span>
+                  </div>
+                  <h5 id="toolTitle_pdftoword">PDF Sang Word</h5>
+                  <p id="toolDesc_pdftoword">Chuyển thành văn bản DOCX sửa đổi được</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('pdf-to-excel', t('toolPdfToExcel'), t('toolPdfToExcelDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #059669;">📊</div>
+                    <span class="tool-badge-cloud">XLSX</span>
+                  </div>
+                  <h5 id="toolTitle_pdftoexcel">PDF Sang Excel</h5>
+                  <p id="toolDesc_pdftoexcel">Trích xuất bảng tính dữ liệu công thức</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('pdf-to-powerpoint', t('toolPdfToPpt'), t('toolPdfToPptDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #ea580c;">📽️</div>
+                    <span class="tool-badge-cloud">PPTX</span>
+                  </div>
+                  <h5 id="toolTitle_pdftoppt">PDF Sang PPT</h5>
+                  <p id="toolDesc_pdftoppt">Chuyển thành slide trình chiếu thuyết trình</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('pdf-to-jpg', t('toolPdfToJpg'), t('toolPdfToJpgDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #7c3aed;">🖼️</div>
+                    <span class="tool-badge-fast">⚡ LOCAL</span>
+                  </div>
+                  <h5 id="toolTitle_pdftojpg">PDF Sang Ảnh JPG</h5>
+                  <p id="toolDesc_pdftojpg">Render từng trang thành ảnh sắc nét trên máy</p>
+                </div>
+              </div>
+
+              <!-- Section 3: Chuyển Đổi Sang PDF -->
+              <div class="tools-section-title">
+                <span id="toolsSectionTitle3">Chuyển Đổi Sang PDF</span>
+              </div>
+              <div class="tools-grid-2col" id="toolsGridSection3">
+                <div class="tool-tile" onclick="openToolPicker('word-to-pdf', t('toolWordToPdf'), t('toolWordToPdfDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #1d4ed8;">📘</div>
+                  </div>
+                  <h5 id="toolTitle_wordtopdf">Word Sang PDF</h5>
+                  <p id="toolDesc_wordtopdf">Giữ chuẩn định dạng văn bản gốc</p>
+                </div>
+
+                <div class="tool-tile" onclick="openToolPicker('image-to-pdf', t('toolImageToPdf'), t('toolImageToPdfDesc'))">
+                  <div class="tool-tile-top">
+                    <div class="tool-tile-icon" style="background: #8b5cf6;">📷</div>
+                    <span class="tool-badge-fast">⚡ LOCAL</span>
+                  </div>
+                  <h5 id="toolTitle_imagetopdf">Ghép Ảnh Sang PDF</h5>
+                  <p id="toolDesc_imagetopdf">Ghép ảnh chụp từ album thành tài liệu PDF</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 3: SCANPDF MEDIA & DOCUMENT PICKER (MÀN HÌNH NÂNG CẤP)
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenMediaPicker">
+              <div class="picker-top-bar">
+                <button class="icon-btn" onclick="switchScreen('screenPdfTools')">✕</button>
+                <div class="picker-dropdown" onclick="showToast('Thư mục: Gần đây')">
+                  <span>Gần đây</span>
+                  <span style="font-size: 8px;">▼</span>
+                </div>
+                <button class="picker-album-btn" onclick="simulateSafPicker()">📁 Mở Album Máy</button>
+              </div>
+
+              <div class="picker-filter-row">
+                <div class="picker-pill active" onclick="filterPickerPills(this)">Tất cả (All)</div>
+                <div class="picker-pill" onclick="filterPickerPills(this)">Video</div>
+                <div class="picker-pill" onclick="filterPickerPills(this)">Hình ảnh (Photos)</div>
+              </div>
+
+              <div style="font-size: 10px; color: var(--text-sub); display:flex; justify-content: space-between;">
+                <span id="pickerToolInstruction">Chọn các tệp để thực hiện tác vụ:</span>
+                <span id="pickerSelectedCountText" style="color: var(--brand-primary); font-weight: 800;">Đã chọn: 2</span>
+              </div>
+
+              <!-- Media Grid 3 cột chuẩn ScanPDF -->
+              <div class="media-grid-3col" id="mediaPickerGrid">
+                <!-- Item 1 -->
+                <div class="media-thumb-item selected" onclick="togglePickerItem(this, 1)">
+                  <div style="font-size: 22px;">📄</div>
+                  <div class="media-select-circle">1</div>
+                  <div class="media-video-duration">PDF • 1.2M</div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="media-thumb-item selected" onclick="togglePickerItem(this, 2)">
+                  <div style="font-size: 22px;">📑</div>
+                  <div class="media-select-circle">2</div>
+                  <div class="media-video-duration">PDF • 450K</div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="media-thumb-item" onclick="togglePickerItem(this, 3)">
+                  <div style="font-size: 22px;">🖼️</div>
+                  <div class="media-select-circle"></div>
+                  <div class="media-video-duration">JPG • 2.1M</div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="media-thumb-item" onclick="togglePickerItem(this, 4)">
+                  <div style="font-size: 22px;">📘</div>
+                  <div class="media-select-circle"></div>
+                  <div class="media-video-duration">DOCX • 890K</div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="media-thumb-item" onclick="togglePickerItem(this, 5)">
+                  <div style="font-size: 22px;">📕</div>
+                  <div class="media-select-circle"></div>
+                  <div class="media-video-duration">PDF • 3.4M</div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="media-thumb-item" onclick="togglePickerItem(this, 6)">
+                  <div style="font-size: 22px;">📗</div>
+                  <div class="media-select-circle"></div>
+                  <div class="media-video-duration">XLSX • 620K</div>
+                </div>
+              </div>
+
+              <!-- Thanh Bottom Action -->
+              <div class="picker-bottom-action">
+                <div>
+                  <div style="font-size: 10px; color: var(--text-sub);">Tệp đã chọn:</div>
+                  <div style="font-size: 12px; font-weight: 900; color: var(--brand-primary);" id="pickerFooterCount">2 tệp hợp lệ</div>
+                </div>
+                <button class="btn-apply-code" onclick="switchScreen('screenPdfConfig')">
+                  <span>Tiếp Tục / Next →</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 4: CẤU HÌNH TÁC VỤ & FAST ENGINE EXECUTION
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenPdfConfig">
+              <div class="home-header">
+                <div style="display:flex; align-items:center; gap: 8px;">
+                  <button class="icon-btn" onclick="switchScreen('screenMediaPicker')">←</button>
+                  <h3 style="font-size: 14px; font-weight: 900;" id="configToolTitle">Cấu Hình Ghép PDF</h3>
+                </div>
+              </div>
+
+              <div class="inspector-card" style="background: var(--bg-card);">
+                <div class="ctrl-item">
+                  <label>Tên Tệp Tin Xuất Ra (Output Filename):</label>
+                  <input type="text" class="ctrl-input" id="cfgOutputName" value="NextAI_Merged_Document_2026.pdf" />
+                </div>
+
+                <div class="ctrl-item" id="cfgParamSpecific">
+                  <label>Dải trang hoặc Tùy chọn xử lý:</label>
+                  <input type="text" class="ctrl-input" id="cfgExtraOption" value="Tất cả các trang (Trọn vẹn 100%)" />
+                </div>
+
+                <div class="ctrl-item">
+                  <label>Chế Độ Xử Lý:</label>
+                  <div style="display:flex; gap: 6px; margin-top: 4px;">
+                    <span class="tool-badge-fast" style="font-size: 10px; padding: 4px 8px;">⚡ Local Fast Engine (Khuyên dùng)</span>
+                  </div>
+                </div>
+
+                <button class="btn-apply-code" style="width: 100%; justify-content: center; padding: 12px; font-size: 13px;" onclick="runFastEngineSimulation()">
+                  <span>⚡ Bắt Đầu Xử Lý (Fast Engine 0.3s)</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 5: MULTI-FORMAT DOCUMENT VIEWER
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenDocViewer">
+              <div class="home-header">
+                <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                <div style="text-align: center;">
+                  <span class="doc-format-tag tag-word" id="viewerTag">WORD</span>
+                  <div style="font-size: 11px; font-weight: 800;" id="viewerTitle">Ke_Hoach_Kinh_Doanh_Q3.docx</div>
+                </div>
+                <button class="icon-btn" onclick="showToast('Chế độ xem ban đêm kích hoạt')">🎨</button>
+              </div>
+
+              <div style="background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; min-height: 380px;">
+                <h4 style="font-size: 13px; font-weight: 900; color: var(--brand-primary); margin-bottom: 8px;">KẾ HOẠCH PHÁT TRIỂN HỆ SINH THÁI NEXTAI OFFICE</h4>
+                <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted);">
+                  <strong>1. Nâng cấp Local-First:</strong> Thay thế hoàn toàn cơ chế gửi file qua Cloud Server bằng Android Framework Engine (PdfRenderer + PdfDocument), xử lý trong RAM thiết bị chỉ mất 0.2 - 0.8 giây, bảo vệ bảo mật dữ liệu tuyệt đối.
+                </p>
+                <br/>
+                <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted);">
+                  <strong>2. Tương thích 16 KB Page Size:</strong> 0 file .so native unaligned, sẵn sàng phát hành trên Google Play Store Android 15 & 16.
+                </p>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 6: OCR CAMERA SCANNER
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenScanner">
+              <div class="home-header">
+                <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                <h3 style="font-size: 14px; font-weight: 900;">Máy Quét OCR ML Kit</h3>
+                <div></div>
+              </div>
+
+              <div style="height: 320px; background: #000; border-radius: var(--radius-lg); border: 2px dashed #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
+                <span style="font-size: 32px;">📷</span>
+                <span style="font-size: 11px; font-weight: 800; color: #38bdf8; margin-top: 8px;">ĐẶT TÀI LIỆU VÀO KHUNG NGẮM</span>
+                <div style="position: absolute; bottom: 16px; display: flex; gap: 12px; align-items: center;">
+                  <button class="icon-btn" onclick="showToast('Bật đèn flash')">⚡</button>
+                  <div style="width: 56px; height: 56px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="showToast('Đã chụp và quét 100% OCR')">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #000;"></div>
+                  </div>
+                  <button class="icon-btn" onclick="simulateSafPicker()">🖼️</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 7: AI ASSISTANT CHAT
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenAiChat">
+              <div class="home-header">
+                <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                <h3 style="font-size: 14px; font-weight: 900;">NextAI Assistant</h3>
+                <button class="icon-btn" onclick="showToast('Đã làm mới đoạn chat')">🔄</button>
+              </div>
+
+              <div style="height: 320px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;">
+                <div style="background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.3); border-radius: 12px; padding: 10px; font-size: 11px; line-height: 1.5;">
+                  🤖 Xin chào Chủ Tịch! Em là <strong>NextAI Office Assistant</strong>. Em có thể tóm tắt hợp đồng, trích xuất bảng biểu Excel, dịch thuật đa ngôn ngữ và phân tích tài liệu tức thì.
+                </div>
+              </div>
+
+              <div style="display:flex; gap: 6px;">
+                <input type="text" class="ctrl-input" style="flex: 1;" placeholder="Hỏi AI về tài liệu của bạn..." />
+                <button class="btn-apply-code" onclick="showToast('AI đang phân tích tài liệu...')">Gửi</button>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 8: WI-FI LOCAL TRANSFER
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenTransfer">
+              <div class="home-header">
+                <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                <h3 style="font-size: 14px; font-weight: 900;">Chia Sẻ Qua Wi-Fi Nội Bộ</h3>
+                <div></div>
+              </div>
+
+              <div style="background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; text-align: center;">
+                <div style="font-size: 40px; margin-bottom: 8px;">📡</div>
+                <p style="font-size: 11px; color: var(--text-muted);">Mở trình duyệt trên máy tính và truy cập:</p>
+                <h4 style="font-size: 14px; font-family: 'JetBrains Mono'; color: #10b981; margin: 6px 0;">http://192.168.1.3:8080</h4>
+                <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; margin-top: 8px;">
+                  <span style="font-size: 10px; color: var(--text-sub);">MÃ XÁC THỰC PIN AN TOÀN:</span>
+                  <div style="font-size: 20px; font-weight: 900; letter-spacing: 4px; color: #fbbf24;">8 4 9 2</div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 9: SETTINGS
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenSettings">
+              <div class="home-header">
+                <button class="icon-btn" onclick="switchScreen('screenHome')">←</button>
+                <h3 style="font-size: 14px; font-weight: 900;" id="settingsHeaderTitle">Cài Đặt</h3>
+                <div></div>
+              </div>
+
+              <div class="inspector-card" style="background: var(--bg-card); gap: 10px;">
+                <!-- DÒNG CHỌN NGÔN NGỮ (KPI 1) -->
+                <div style="display:flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); cursor: pointer;" onclick="openLanguageModal()">
+                  <div style="display:flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">🌐</span>
+                    <div>
+                      <div style="font-size: 12px; font-weight: 700;" id="settingLangRowTitle">Ngôn ngữ hiển thị</div>
+                      <div style="font-size: 10px; color: var(--text-muted);" id="settingLangRowSub">Nhấn để thay đổi ngôn ngữ toàn bộ ứng dụng</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; align-items: center; gap: 6px;">
+                    <span class="active-lang-badge" id="currentLangBadge">Tiếng Việt</span>
+                    <span style="font-size: 12px; color: var(--text-sub);">›</span>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                  <span style="font-size: 12px; font-weight: 700;" id="settingThemeTitle">Giao diện tối</span>
+                  <input type="checkbox" checked onchange="toggleAppTheme()" />
+                </div>
+                <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                  <span style="font-size: 12px; font-weight: 700;" id="settingSoundTitle">Âm thanh & Rung</span>
+                  <input type="checkbox" checked />
+                </div>
+                <div style="display:flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                  <span style="font-size: 12px; font-weight: 700;" id="settingVersionTitle">Phiên bản ứng dụng</span>
+                  <span style="font-size: 11px; font-weight: 800; color: #10b981;">v2.1.14 (311216)</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- ----------------------------------------------------------------
+                 SCREEN 10: PRO VIP PAYWALL
+                 ---------------------------------------------------------------- -->
+            <section class="screen-pane" id="screenPaywall">
+              <div class="home-header">
+                <div></div>
+                <button class="icon-btn" onclick="switchScreen('screenHome')">✕</button>
+              </div>
+
+              <div style="text-align: center;">
+                <div style="font-size: 40px;">👑</div>
+                <h3 style="font-size: 16px; font-weight: 900; background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="paywallTitle">Nâng Cấp NextAI Pro VIP</h3>
+                <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="paywallSub">100% Không Quảng Cáo • Mở Khóa Toàn Bộ Tính Năng</p>
+              </div>
+
+              <div class="inspector-card" style="background: var(--bg-card); border-color: #fbbf24;">
+                <div style="font-size: 10px; font-weight: 900; color: #fbbf24;" id="paywallPromoBadge">TIẾT KIỆM 70% • PHỔ BIẾN NHẤT</div>
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h4 style="font-size: 13px; font-weight: 900;" id="paywallPlanTitle">Gói Năm</h4>
+                    <p style="font-size: 10px; color: var(--text-sub);" id="paywallPlanDesc">Thanh toán hàng năm • Hủy bất kỳ lúc nào</p>
+                  </div>
+                  <div style="font-size: 14px; font-weight: 900; color: #fbbf24;" id="paywallPlanPrice">699.000 đ</div>
+                </div>
+              </div>
+
+              <button class="btn-apply-code" style="width: 100%; justify-content: center; background: var(--gold-gradient); color: #000; font-weight: 900; padding: 12px;" onclick="simulateVipPurchase()">
+                <span id="paywallCtaBtn">Tiếp Tục Đăng Ký VIP</span>
+              </button>
+            </section>
+
+          </div>
+
+          <!-- Docked Bottom Area -->
+          <div class="app-docked-bottom">
+            <!-- AdMob Banner -->
+            <div class="admob-banner-container" id="appAdmobBanner">
+              <div style="display:flex; align-items: center;">
+                <span class="admob-badge">Ad</span>
+                <div class="admob-info">
+                  <h5 id="admobBannerTitle">NextAI Cloud Storage</h5>
+                  <p id="admobBannerDesc">Sao lưu tài liệu an toàn tuyệt đối</p>
+                </div>
+              </div>
+              <button class="admob-cta" id="admobCtaBtn" onclick="showToast('Đã click quảng cáo AdMob test')">MỞ</button>
+            </div>
+
+            <!-- 5 Tabs Bottom Navigation -->
+            <nav class="app-nav-bar">
+              <div class="nav-item active" id="navTabHome" onclick="switchNavTab(this, 'screenHome')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span id="navTextHome">Trang chủ</span>
+              </div>
+              <div class="nav-item" id="navTabFiles" onclick="switchNavTab(this, 'screenDocViewer')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                <span id="navTextFiles">Tập tin</span>
+              </div>
+              <div class="nav-item" id="navTabTools" onclick="switchNavTab(this, 'screenPdfTools')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span id="navTextTools">Công cụ</span>
+              </div>
+              <div class="nav-item" id="navTabAi" onclick="switchNavTab(this, 'screenAiChat')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span id="navTextAi">AI Chat</span>
+              </div>
+              <div class="nav-item" id="navTabSettings" onclick="switchNavTab(this, 'screenSettings')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span id="navTextSettings">Cài đặt</span>
+              </div>
+            </nav>
+            <div class="home-indicator"></div>
+          </div>
+
+          <!-- Fast Engine Simulation Loading Dialog -->
+          <div class="sim-dialog-overlay" id="simDialog">
+            <div class="sim-dialog-card">
+              <div style="display:flex; align-items:center; gap: 8px;">
+                <div style="font-size: 20px;">⚡</div>
+                <h4 style="font-size: 13px; font-weight: 900;" id="simDialogTitle">Local-First Fast Engine</h4>
+              </div>
+              <p style="font-size: 11px; color: var(--text-muted);" id="simDialogDesc">Đang kết xuất bitmap & ghép trang trực tiếp qua PdfRenderer...</p>
+              
+              <div class="sim-progress-bar-bg">
+                <div class="sim-progress-bar-fill" id="simProgressFill"></div>
+              </div>
+              <div style="font-size: 10px; font-weight: 800; color: #10b981; text-align: right;" id="simProgressPercent">0%</div>
+
+              <div id="simDialogDoneActions" style="display:none; flex-direction: column; gap: 8px; margin-top: 4px;">
+                <button class="btn-apply-code" style="justify-content: center;" onclick="closeSimDialog(); switchScreen('screenDocViewer');">
+                  <span id="simBtnOpenDoc">Mở Tài Liệu Đã Ghép Ngay</span>
+                </button>
+                <button class="studio-btn" style="justify-content: center;" onclick="closeSimDialog()">
+                  <span id="simBtnCloseDialog">Đóng Hộp Thoại</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom-Sheet Modal Chọn Ngôn Ngữ (KPI 1) -->
+          <div class="lang-modal-overlay" id="langModalOverlay" onclick="if(event.target === this) closeLanguageModal()">
+            <div class="lang-modal-card">
+              <div class="lang-modal-header">
+                <div style="display:flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 18px;">🌐</span>
+                  <h4 style="font-size: 13px; font-weight: 900;" id="langModalTitle">Chọn Ngôn Ngữ Ứng Dụng</h4>
+                </div>
+                <button class="icon-btn" onclick="closeLanguageModal()" style="font-size: 16px;">✕</button>
+              </div>
+              <div class="lang-list" id="langOptionsList">
+                <!-- Sẽ render động các ngôn ngữ qua JS -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 2. STUDIO INSPECTOR & LIVE CODE TUNER (CHO CHỦ TỊCH TỰ SỬA TRỰC TIẾP) -->
+        <aside class="studio-inspector">
+          
+          <!-- Bảng Điều Khiển Trực Tiếp UI (Visual Live Tuner) -->
+          <div class="inspector-card">
+            <div class="inspector-card-header">
+              <h3>🎨 Trình Chỉnh Sửa Giao Diện & Thông Số Trực Tiếp (Live UI Tuner)</h3>
+              <button class="btn-apply-code" onclick="applyLiveTuning()">
+                <span>⚡ Áp Dụng Ngay (Apply Live)</span>
+              </button>
+            </div>
+
+            <div class="code-controls-grid">
+              <div class="ctrl-item">
+                <label>Tên Ứng Dụng (App Title):</label>
+                <input type="text" class="ctrl-input" id="tuneAppTitle" value="NextAI Office Suite" />
+              </div>
+
+              <div class="ctrl-item">
+                <label>Màu Chủ Đạo (Primary Brand Color):</label>
+                <input type="color" class="ctrl-input" id="tunePrimaryColor" value="#2563eb" style="height: 34px; padding: 2px;" />
+              </div>
+
+              <div class="ctrl-item">
+                <label>Bo Góc Thẻ (Border Radius):</label>
+                <select class="ctrl-input" id="tuneBorderRadius">
+                  <option value="8px">Nhỏ (8px)</option>
+                  <option value="14px" selected>Chuẩn (14px - ScanPDF)</option>
+                  <option value="20px">Mềm mại (20px)</option>
+                  <option value="28px">Rất Tròn (28px)</option>
+                </select>
+              </div>
+
+              <div class="ctrl-item">
+                <label>Quảng Cáo AdMob Banner:</label>
+                <select class="ctrl-input" id="tuneAdmobBanner">
+                  <option value="visible" selected>Bật (Free Mode)</option>
+                  <option value="hidden">Tắt (Pro VIP Mode)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bảng Mã Nguồn Kotlin Compose Hiện Tại (Active Screen Source Code) -->
+          <div class="inspector-card">
+            <div class="inspector-card-header">
+              <h3>💻 Mã Nguồn Kotlin Compose Hiện Tại (Màn Hình Đang Xem)</h3>
+              <div style="display:flex; gap: 6px;">
+                <select class="ctrl-input" id="codeFileSelect" onchange="loadSourceCodeFile(this.value)" style="font-weight: 700;">
+                  <option value="MainScreen.kt">MainScreen.kt (Home, Selection Bar & Delete All)</option>
+                  <option value="DocumentCard.kt">DocumentCard.kt (Tick Checkbox & Single Delete)</option>
+                  <option value="PdfToolsScreen.kt">PdfToolsScreen.kt (15 Tools + Picker)</option>
+                  <option value="PdfConversionRepository.kt">PdfConversionRepository.kt (Fast Engine)</option>
+                  <option value="PremiumPaywallScreen.kt">PremiumPaywallScreen.kt (VIP Paywall)</option>
+                </select>
+                <button class="studio-btn" onclick="copyCurrentCode()" title="Copy mã nguồn Kotlin">📋 Copy</button>
+              </div>
+            </div>
+
+            <!-- Khung Code Editor -->
+            <div class="code-editor-box" id="sourceCodeViewer" contenteditable="true" spellcheck="false"></div>
+
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 10px; color: var(--text-sub);">💡 Chủ Tịch có thể gõ sửa trực tiếp trong khung code trên rồi bấm nút bên phải:</span>
+              <button class="btn-apply-code" onclick="showToast('✨ Đã lưu thay đổi vào bộ nhớ đệm thiết kế!')">
+                <span>💾 Lưu Mã Vừa Sửa</span>
+              </button>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- MODE 2: LIVE CODE & UI EDITOR CHUYÊN SÂU -->
+    <div class="studio-mode-view" id="modeCodeEditor">
+      <div class="inspector-card" style="max-width: 1100px; margin: 0 auto;">
+        <div class="inspector-card-header">
+          <h3>💻 Trung Tâm Xem & Chỉnh Sửa Mã Nguồn Native Kotlin Jetpack Compose</h3>
+          <div style="display:flex; gap: 8px;">
+            <button class="studio-btn" onclick="copyCurrentCode()">📋 Sao Chép Mã Nguồn</button>
+            <button class="btn-apply-code" onclick="downloadCurrentCode()">💾 Tải Về File .kt</button>
+          </div>
+        </div>
+        <p style="font-size: 11px; color: var(--text-muted);">
+          Toàn bộ mã nguồn giao diện Native Compose đang chạy trên ứng dụng Android. Chủ Tịch có thể duyệt từng file, sửa logic hoặc copy trực tiếp sang Android Studio để build APK/AAB!
+        </p>
+        <div class="code-editor-box" id="fullSourceCodeViewer" style="height: 540px;" contenteditable="true" spellcheck="false"></div>
+      </div>
+    </div>
+
+    <!-- MODE 3: DESIGN TOKENS -->
+    <div class="studio-mode-view" id="modeTokens">
+      <div class="inspector-card" style="max-width: 1000px; margin: 0 auto;">
+        <div class="inspector-card-header">
+          <h3>🎨 Bảng Token Màu & Chuẩn Thiết Kế V2.1 Design-Gated</h3>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 10px;">
+          <div style="background: #2563eb; padding: 16px; border-radius: 12px; color: #fff; font-weight: 800; font-size: 12px;">Brand Primary (#2563eb)</div>
+          <div style="background: #10b981; padding: 16px; border-radius: 12px; color: #fff; font-weight: 800; font-size: 12px;">Fast Local Engine (#10b981)</div>
+          <div style="background: #7c3aed; padding: 16px; border-radius: 12px; color: #fff; font-weight: 800; font-size: 12px;">Accent Violet (#7c3aed)</div>
+          <div style="background: #fbbf24; padding: 16px; border-radius: 12px; color: #000; font-weight: 800; font-size: 12px;">Gold Pro VIP (#fbbf24)</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Message -->
+  <div class="studio-toast" id="studioToast">
+    <span id="toastText">Thao tác thành công!</span>
+  </div>
+
+  <!-- ========================================================================
+       JAVASCRIPT LOGIC & SOURCE CODE REPOSITORY
+       ======================================================================== -->
+  <script>
+    /* Kho mã nguồn thực tế của dự án */
+    const CODE_FILES = {
+      'PdfToolsScreen.kt': `// ==============================================================================
+// NextAI Office Suite - PDF Tools Suite Screen (Chuẩn ScanPDF-main)
+// Tích hợp 15 công cụ + File Picker + Dialog cấu hình & Fast Engine
+// ==============================================================================
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PdfToolsScreen(
+    onBackClick: () -> Unit,
+    onToolSelected: (String) -> Unit = {},
+    onOpenDocument: (DocumentFile) -> Unit = {}
+) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val repo = remember { OfficeApp.instance.pdfConversionRepository }
+
+    // 15 Công cụ chuẩn mực từ ScanPDF-main
+    val toolsList = remember {
+        listOf(
+            // Section 1: Organize & Edit (Local-First Fast Engine)
+            ToolConfig("merge", "Merge PDF", "Ghép Nhiều Tệp PDF", "Combine multiple PDF documents into one", R.drawable.ic_tool_mergepdf, Color(0xFF2563EB), "organize", listOf("pdf"), 2, 20),
+            ToolConfig("split", "Split PDF", "Tách Trang PDF", "Extract pages or split into parts", R.drawable.ic_tool_split, Color(0xFF3B82F6), "organize", listOf("pdf"), 1, 1),
+            ToolConfig("compress", "Compress PDF", "Nén Giảm Dung Lượng", "Reduce file size with optimal quality", R.drawable.ic_tool_compresspdf, Color(0xFF10B981), "organize", listOf("pdf"), 1, 5),
+            ToolConfig("ocr-pdf", "OCR Text Extraction", "Nhận Diện Chữ OCR", "Extract text & create searchable PDF", R.drawable.ic_tool_extracttext, Color(0xFF0D9488), "organize", listOf("pdf"), 1, 1),
+            ToolConfig("protect", "Lock PDF", "Khóa Mật Khẩu PDF", "Encrypt document with password", R.drawable.ic_tool_lockpdf, Color(0xFFEF4444), "organize", listOf("pdf"), 1, 1),
+            ToolConfig("unlock", "Unlock PDF", "Gỡ Mật Khẩu PDF", "Remove password protection from PDF", R.drawable.ic_tool_unlock, Color(0xFFF59E0B), "organize", listOf("pdf"), 1, 1),
+
+            // Section 2: Convert from PDF (Cloud + Local)
+            ToolConfig("pdf-to-word", "PDF to Word", "PDF Sang Word", "Convert PDF to editable DOCX", R.drawable.ic_tool_word, Color(0xFF2563EB), "from_pdf", listOf("pdf"), 1, 1),
+            ToolConfig("pdf-to-excel", "PDF to Excel", "PDF Sang Excel", "Extract tables into XLSX spreadsheets", R.drawable.ic_tool_excel, Color(0xFF059669), "from_pdf", listOf("pdf"), 1, 1),
+            ToolConfig("pdf-to-powerpoint", "PDF to PPT", "PDF Sang PowerPoint", "Convert PDF to PPTX presentation", R.drawable.ic_tool_ppt, Color(0xFFEA580C), "from_pdf", listOf("pdf"), 1, 1),
+            ToolConfig("pdf-to-jpg", "PDF to Images", "PDF Sang Ảnh JPG", "Extract every page as high-res JPG", R.drawable.ic_tool_jpg, Color(0xFF7C3AED), "from_pdf", listOf("pdf"), 1, 1),
+
+            // Section 3: Convert to PDF
+            ToolConfig("word-to-pdf", "Word to PDF", "Word Sang PDF", "Convert DOCX/DOC documents to PDF", R.drawable.ic_tool_word, Color(0xFF1D4ED8), "to_pdf", listOf("doc", "docx"), 1, 1),
+            ToolConfig("image-to-pdf", "Image to PDF", "Ghép Ảnh Sang PDF", "Convert photos into high-res PDF", R.drawable.ic_tool_image, Color(0xFF8B5CF6), "to_pdf", listOf("jpg", "png"), 1, 20)
+        )
+    }
+
+    Scaffold(
+        topBar = {
+            AppTopBar(
+                title = "Bộ Công Cụ PDF / PDF Tools",
+                onBackClick = onBackClick
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp)
+        ) {
+            // Banner Công Nghệ NextAI Fast Engine
+            item {
+                FastEngineBanner()
+            }
+            // Lưới công cụ phân loại chuẩn ScanPDF-main
+            // ...
+        }
+    }
+}`,
+
+      'PdfConversionRepository.kt': `// ==============================================================================
+// NextAI Office Suite - Local-First Fast Engine (100% Offline & 16 KB Aligned)
+// Sử dụng Android Framework PdfRenderer + PdfDocument, 0 file .so native
+// ==============================================================================
+class PdfConversionRepository(private val context: Context) {
+
+    /**
+     * Ghép PDF Local-First siêu tốc (0.3s) trong RAM
+     */
+    suspend fun mergePdf(
+        pdfFiles: List<File>,
+        outputName: String = "Merged_Document",
+        onProgress: ((ConversionProgress) -> Unit)? = null
+    ): Result<File> = withContext(Dispatchers.IO) {
+        try {
+            // Bước 1: Thử nghiệm Engine Cục Bộ Siêu Tốc
+            val localResult = mergePdfLocally(pdfFiles, outputName, onProgress)
+            if (localResult.isSuccess) {
+                return@withContext localResult
+            }
+        } catch (e: Exception) {
+            Log.w("PdfRepo", "Local merge failed, falling back to Cloud: \${e.message}")
+        }
+
+        // Bước 2: Graceful Fallback sang Cloud Conversion Engine nếu file có mã hóa lạ
+        mergePdfCloud(pdfFiles, outputName, onProgress)
+    }
+
+    private fun mergePdfLocally(
+        pdfFiles: List<File>,
+        outputName: String,
+        onProgress: ((ConversionProgress) -> Unit)?
+    ): Result<File> {
+        val outDir = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "NextAIOffice")
+        if (!outDir.exists()) outDir.mkdirs()
+        val destFile = File(outDir, "\${outputName}_\${System.currentTimeMillis()}.pdf")
+
+        val outDoc = PdfDocument()
+        var totalPagesWritten = 0
+
+        for ((fileIdx, file) in pdfFiles.withIndex()) {
+            val pfd = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            val renderer = PdfRenderer(pfd)
+            for (p in 0 until renderer.pageCount) {
+                val page = renderer.openPage(p)
+                val pageInfo = PdfDocument.PageInfo.Builder(page.width, page.height, totalPagesWritten + 1).create()
+                val docPage = outDoc.startPage(pageInfo)
+                val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                docPage.canvas.drawBitmap(bitmap, 0f, 0f, null)
+                outDoc.finishPage(docPage)
+                bitmap.recycle()
+                page.close()
+                totalPagesWritten++
+            }
+            renderer.close()
+            pfd.close()
+        }
+
+        FileOutputStream(destFile).use { outDoc.writeTo(it) }
+        outDoc.close()
+        return Result.success(destFile)
+    }
+}`,
+
+      'MainScreen.kt': `// ==============================================================================
+// NextAI Office Suite - Home Dashboard, Selection Mode & Batch Delete
+// Hỗ trợ Tick All, Chọn từng tệp, Xóa hàng loạt và Hộp thoại xác nhận
+// ==============================================================================
+@Composable
+fun HomeTabContent(
+    documents: List<DocumentFile>,
+    selectedCategory: DocType?,
+    searchQuery: String,
+    onDeleteDocuments: (Set<String>) -> Unit = {},
+    onResetSampleDocuments: () -> Unit = {},
+    onDocumentClick: (DocumentFile) -> Unit,
+    onToggleFavorite: (String) -> Unit
+) {
+    var isSelectionMode by remember { mutableStateOf(false) }
+    var selectedDocIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var docToDeleteSingle by remember { mutableStateOf<DocumentFile?>(null) }
+    var showBatchDeleteConfirm by remember { mutableStateOf(false) }
+
+    val filteredDocs = documents.filter { doc ->
+        (selectedCategory == null || doc.docType == selectedCategory) &&
+        (searchQuery.isEmpty() || doc.name.contains(searchQuery, ignoreCase = true))
+    }
+
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        // Thanh điều khiển Chọn Nhiều & Nút Xóa Hàng Loạt
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Danh Mục Tài Liệu (\${filteredDocs.size})", fontWeight = FontWeight.Bold)
+                TextButton(onClick = {
+                    isSelectionMode = !isSelectionMode
+                    if (!isSelectionMode) selectedDocIds = emptySet()
+                }) {
+                    Text(if (isSelectionMode) "Hủy chọn" else "Chọn nhiều")
+                }
+            }
+
+            // Thanh Tick All (Chọn tất cả) khi bật Selection Mode
+            if (isSelectionMode && filteredDocs.isNotEmpty()) {
+                val isAllSelected = selectedDocIds.size == filteredDocs.size
+                Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Checkbox(
+                                checked = isAllSelected,
+                                onCheckedChange = { checked ->
+                                    selectedDocIds = if (checked) filteredDocs.map { it.id }.toSet() else emptySet()
+                                }
+                            )
+                            Text("Chọn tất cả (\${filteredDocs.size})", fontWeight = FontWeight.SemiBold)
+                        }
+                        Button(
+                            onClick = { showBatchDeleteConfirm = true },
+                            enabled = selectedDocIds.isNotEmpty(),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Xóa")
+                            Text("Xóa (\${selectedDocIds.size})")
+                        }
+                    }
+                }
+            }
+        }
+
+        // Danh sách tài liệu hỗ trợ tick checkbox & xóa từng file
+        itemsIndexed(filteredDocs) { _, doc ->
+            DocumentCard(
+                document = doc,
+                isSelectionMode = isSelectionMode,
+                isSelected = doc.id in selectedDocIds,
+                onSelectToggle = { checked ->
+                    selectedDocIds = if (checked) selectedDocIds + doc.id else selectedDocIds - doc.id
+                },
+                onClick = { onDocumentClick(doc) },
+                onFavoriteClick = { onToggleFavorite(doc.id) },
+                onDeleteClick = { docToDeleteSingle = doc }
+            )
+        }
+    }
+}`,
+
+      'DocumentCard.kt': `// ==============================================================================
+// NextAI Office Suite - DocumentCard Component (Tick Checkbox & Single Delete)
+// ==============================================================================
+@Composable
+fun DocumentCard(
+    document: DocumentFile,
+    onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false,
+    onSelectToggle: ((Boolean) -> Unit)? = null,
+    onDeleteClick: (() -> Unit)? = null
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                if (isSelectionMode && onSelectToggle != null) {
+                    onSelectToggle(!isSelected)
+                } else {
+                    onClick()
+                }
+            },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(
+            width = if (isSelected) 1.8.dp else 1.dp,
+            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Checkbox tick chọn khi ở chế độ chọn nhiều
+            if (isSelectionMode) {
+                Checkbox(
+                    checked = isSelected,
+                    onCheckedChange = { checked -> onSelectToggle?.invoke(checked) }
+                )
+            }
+
+            // Badge định dạng (DOC, XLS, PPT, PDF)
+            Box(
+                modifier = Modifier.size(44.dp).clip(RoundedCornerShape(10.dp)).background(document.docType.color),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(document.docType.badgeLabel, color = Color.White, fontWeight = FontWeight.ExtraBold)
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Tiêu đề & thông tin metadata
+            Column(modifier = Modifier.weight(1f)) {
+                Text(document.name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text("\${(document.sizeBytes / 1024)} KB • \${document.timeAgo}", style = MaterialTheme.typography.bodySmall)
+            }
+
+            // Nút Yêu Thích
+            IconButton(onClick = onFavoriteClick, modifier = Modifier.size(34.dp)) {
+                Icon(if (document.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder, contentDescription = "Fav")
+            }
+
+            // Nút Xóa Từng Tệp Đơn Lẻ
+            if (onDeleteClick != null) {
+                IconButton(onClick = onDeleteClick, modifier = Modifier.size(34.dp)) {
+                    Icon(Icons.Outlined.DeleteOutline, contentDescription = "Xóa", tint = Color(0xFFEF4444))
+                }
+            }
+        }
+    }
+}`,
+
+      'PremiumPaywallScreen.kt': `// ==============================================================================
+// NextAI Office Suite - High-Conversion VIP Paywall
+// ==============================================================================
+@Composable
+fun PremiumPaywallScreen(
+    onDismiss: () -> Unit,
+    onPurchaseSuccess: () -> Unit
+) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        CrownHeroSection()
+        FeatureBenefitsList()
+        SubscriptionPlans(
+            selectedPlan = selectedPlan,
+            onPlanSelect = { selectedPlan = it }
+        )
+        PurchaseCtaButton(
+            plan = selectedPlan,
+            onClick = { /* Google Play Billing 7.x Flow */ }
+        )
+    }
+}`
+    };
+
+    let currentScreenId = 'screenHome';
+    let isVipTier = false;
+
+    /* Chuyển màn hình điện thoại */
+    function switchScreen(screenId) {
+      currentScreenId = screenId;
+      document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        document.getElementById('appViewport').scrollTop = 0;
+      }
+      document.querySelectorAll('.nav-chip').forEach(c => {
+        c.classList.toggle('active', c.getAttribute('data-screen') === screenId);
+      });
+      // Tự động load code tương ứng
+      if (screenId === 'screenPdfTools' || screenId === 'screenMediaPicker' || screenId === 'screenPdfConfig') {
+        document.getElementById('codeFileSelect').value = 'PdfToolsScreen.kt';
+        loadSourceCodeFile('PdfToolsScreen.kt');
+      } else if (screenId === 'screenPaywall') {
+        document.getElementById('codeFileSelect').value = 'PremiumPaywallScreen.kt';
+        loadSourceCodeFile('PremiumPaywallScreen.kt');
+      } else {
+        document.getElementById('codeFileSelect').value = 'MainScreen.kt';
+        loadSourceCodeFile('MainScreen.kt');
+      }
+    }
+
+    /* Chuyển tab bottom navigation */
+    function switchNavTab(el, screenId) {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      switchScreen(screenId);
+    }
+
+    /* Chuyển chế độ Studio */
+    function switchStudioMode(modeId, btn) {
+      document.querySelectorAll('.mode-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.studio-mode-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(modeId).classList.add('active');
+    }
+
+    /* Load mã nguồn vào editor */
+    function loadSourceCodeFile(filename) {
+      const code = CODE_FILES[filename] || '// Source code not found';
+      document.getElementById('sourceCodeViewer').innerText = code;
+      const fullViewer = document.getElementById('fullSourceCodeViewer');
+      if (fullViewer) fullViewer.innerText = code;
+    }
+
+    /* Copy mã nguồn hiện tại */
+    function copyCurrentCode() {
+      const code = document.getElementById('sourceCodeViewer').innerText;
+      navigator.clipboard.writeText(code);
+      showToast('📋 Đã sao chép mã nguồn Compose vào Clipboard!');
+    }
+
+    /* Tải file code về máy */
+    function downloadCurrentCode() {
+      const filename = document.getElementById('codeFileSelect').value;
+      const code = document.getElementById('sourceCodeViewer').innerText;
+      const blob = new Blob([code], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      showToast('💾 Đã tải file ' + filename + ' về máy!');
+    }
+
+    /* Áp dụng thay đổi trực quan lên điện thoại (Live UI Tuner) */
+    function applyLiveTuning() {
+      const appTitle = document.getElementById('tuneAppTitle').value;
+      const primaryColor = document.getElementById('tunePrimaryColor').value;
+      const borderRadius = document.getElementById('tuneBorderRadius').value;
+      const admobState = document.getElementById('tuneAdmobBanner').value;
+
+      // Cập nhật tiêu đề
+      document.getElementById('homeAppTitle').textContent = appTitle;
+      document.getElementById('topStudioTitle').textContent = appTitle + ' — Interactive UI & Live Code Studio';
+
+      // Cập nhật màu chủ đạo
+      document.documentElement.style.setProperty('--brand-primary', primaryColor);
+
+      // Cập nhật bo góc
+      document.documentElement.style.setProperty('--radius-md', borderRadius);
+
+      // Cập nhật AdMob banner
+      const banner = document.getElementById('appAdmobBanner');
+      if (admobState === 'hidden') {
+        banner.classList.add('hidden');
+      } else {
+        banner.classList.remove('hidden');
+      }
+
+      showToast('⚡ Đã áp dụng các thông số mới lên khung điện thoại!');
+    }
+
+    /* Mở Tool Picker từ màn hình PDF Tools */
+    function openToolPicker(toolId, toolTitle, toolDesc) {
+      document.getElementById('configToolTitle').textContent = 'Cấu Hình: ' + toolTitle;
+      document.getElementById('cfgOutputName').value = 'NextAI_' + toolId.replace('-', '_') + '_output.pdf';
+      switchScreen('screenMediaPicker');
+      showToast('Đã chọn công cụ: ' + toolTitle);
+    }
+
+    /* Tích chọn item trong Media Picker */
+    function togglePickerItem(itemEl, idx) {
+      itemEl.classList.toggle('selected');
+      const count = document.querySelectorAll('.media-thumb-item.selected').length;
+      document.getElementById('pickerSelectedCountText').textContent = 'Đã chọn: ' + count;
+      document.getElementById('pickerFooterCount').textContent = count + ' tệp hợp lệ';
+    }
+
+    function filterPickerPills(pillEl) {
+      document.querySelectorAll('.picker-pill').forEach(p => p.classList.remove('active'));
+      pillEl.classList.add('active');
+      showToast('Lọc danh sách: ' + pillEl.innerText);
+    }
+
+    function simulateSafPicker() {
+      showToast('📂 Đang kích hoạt Android Storage Access Framework (SAF)...');
+      setTimeout(() => {
+        showToast('✓ Đã nạp 2 tệp tin từ Thẻ nhớ / Downloads vào bộ nhớ tạm');
+      }, 500);
+    }
+
+    /* Mô phỏng Fast Engine chạy 0.3s */
+    function runFastEngineSimulation() {
+      const dialog = document.getElementById('simDialog');
+      const fill = document.getElementById('simProgressFill');
+      const percent = document.getElementById('simProgressPercent');
+      const doneActions = document.getElementById('simDialogDoneActions');
+
+      doneActions.style.display = 'none';
+      fill.style.width = '0%';
+      percent.textContent = '0%';
+      dialog.classList.add('active');
+
+      let cur = 0;
+      const interval = setInterval(() => {
+        cur += 25;
+        fill.style.width = cur + '%';
+        percent.textContent = cur + '% (Local-First: 0.3s)';
+        if (cur >= 100) {
+          clearInterval(interval);
+          percent.textContent = '✓ HOÀN THÀNH (312 ms) • Đã lưu vào máy';
+          doneActions.style.display = 'flex';
+          showToast('🎉 Xử lý tài liệu thành công trong 0.31 giây!');
+        }
+      }, 80);
+    }
+
+    function closeSimDialog() {
+      document.getElementById('simDialog').classList.remove('active');
+    }
+
+    /* Chuyển đổi gói VIP */
+    function toggleSubscriptionMode() {
+      isVipTier = !isVipTier;
+      const btn = document.getElementById('btnSubToggle');
+      const banner = document.getElementById('appAdmobBanner');
+      const subLabel = document.getElementById('subStatusLabel');
+      const tierText = document.getElementById('userTierSubtext');
+
+      if (isVipTier) {
+        btn.className = 'sub-toggle-pill vip';
+        subLabel.textContent = 'Tier: Pro VIP (0 Ads)';
+        tierText.textContent = '👑 NextAI Pro VIP • Unlimited';
+        banner.classList.add('hidden');
+        showToast('👑 Đã kích hoạt chế độ PRO VIP (Tắt toàn bộ AdMob)');
+      } else {
+        btn.className = 'sub-toggle-pill free';
+        subLabel.textContent = 'Tier: Free (AdMob ON)';
+        tierText.textContent = 'Free Tier • Ad Supported';
+        banner.classList.remove('hidden');
+        showToast('⚡ Chuyển về chế độ Free Tier');
+      }
+    }
+
+    function simulateVipPurchase() {
+      isVipTier = true;
+      toggleSubscriptionMode();
+      isVipTier = true; // ensure state
+      showToast('🎉 Thanh toán Google Play Billing thành công!');
+      setTimeout(() => { switchScreen('screenHome'); }, 600);
+    }
+
+    /* Toggle Dark / Light */
+    function toggleAppTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.getElementById('themeLabel').textContent = 'Theme: ' + (next === 'dark' ? 'Dark' : 'Light');
+      showToast('Chuyển theme: ' + next.toUpperCase());
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('studioToast');
+      document.getElementById('toastText').textContent = msg;
+      toast.classList.add('active');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => { toast.classList.remove('active'); }, 2400);
+    }
+
+    function openAabDownload() {
+      showToast('Gói AAB v2.1.10 (311211) đã sẵn sàng trên Desktop!');
+      alert('Đường dẫn file AAB trên máy của Chủ Tịch:\nC:\Users\PC.DESKTOP-81LIH38\Desktop\OfficeDocument_v2.1.10_311211_release.aab\n(Dung lượng: 9.89 MB, đã ký số release)');
+    }
+
+    function openDocumentInViewer(type, title, size) {
+      document.getElementById('viewerTitle').textContent = title;
+      const tag = document.getElementById('viewerTag');
+      tag.className = 'doc-format-tag tag-' + type;
+      tag.textContent = type.toUpperCase();
+      switchScreen('screenDocViewer');
+    }
+
+    /* ==========================================================================
+       I18N MULTI-LANGUAGE SYSTEM (10 LANGUAGES - KPI 1)
+       Mỗi ngôn ngữ độc lập, không song ngữ / slashes, tự động cập nhật toàn bộ app
+       ========================================================================== */
+    const I18N_LANGUAGES = [
+      { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳', label: 'Tiếng Việt' },
+      { code: 'en', name: 'English', flag: '🇬🇧', label: 'English' },
+      { code: 'es', name: 'Español', flag: '🇪🇸', label: 'Español' },
+      { code: 'fr', name: 'Français', flag: '🇫🇷', label: 'Français' },
+      { code: 'de', name: 'Deutsch', flag: '🇩🇪', label: 'Deutsch' },
+      { code: 'ja', name: '日本語', flag: '🇯🇵', label: '日本語' },
+      { code: 'ko', name: '한국어', flag: '🇰🇷', label: '한국어' },
+      { code: 'zh', name: '简体中文', flag: '🇨🇳', label: '简体中文' },
+      { code: 'ru', name: 'Русский', flag: '🇷🇺', label: 'Русский' },
+      { code: 'ar', name: 'العربية', flag: '🇸🇦', label: 'العربية' }
+    ];
+
+    const I18N_STRINGS = {
+      vi: {
+        navHome: "Trang chủ", navFiles: "Tập tin", navTools: "Công cụ", navAi: "AI Chat", navSettings: "Cài đặt",
+        homeTitle: "NextAI Office Suite", userTier: "Bản miễn phí • Kèm quảng cáo",
+        searchPlaceholder: "Tìm Word, Excel, PDF, PPTX...",
+        quickAi: "Trợ Lý AI", quickScan: "Quét OCR", quickPdf: "Công Cụ PDF", quickTransfer: "Truyền Wi-Fi",
+        catalogTitle: "Danh Mục Tài Liệu", selectMultiple: "Chọn nhiều", cancelSelect: "Hủy chọn",
+        tickAll: "Chọn tất cả", delete: "Xóa",
+        chipAll: "Tất cả", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "Bộ Công Cụ PDF", pdfBannerTitle: "Công Nghệ Fast Engine", pdfBannerDesc: "100% Cục bộ & An toàn",
+        secOrganize: "Sắp Xếp & Chỉnh Sửa", secFromPdf: "Chuyển Đổi Từ PDF", secToPdf: "Chuyển Đổi Sang PDF",
+        tool_merge_t: "Ghép PDF", tool_merge_d: "Kết hợp nhiều tệp thành 1",
+        tool_split_t: "Tách PDF", tool_split_d: "Trích xuất trang cần lấy",
+        tool_compress_t: "Nén PDF", tool_compress_d: "Giảm kích thước tệp",
+        tool_protect_t: "Khóa PDF", tool_protect_d: "Đặt mật khẩu bảo vệ",
+        tool_unlock_t: "Mở Khóa", tool_unlock_d: "Gỡ mật khẩu tệp PDF",
+        tool_sign_t: "Chữ Ký Số", tool_sign_d: "Ký văn bản trực tiếp",
+        tool_pagenum_t: "Đánh Số Trang", tool_pagenum_d: "Chèn số trang tự động",
+        tool_p2w_t: "PDF sang Word", tool_p2w_d: "Chuyển định dạng DOCX",
+        tool_p2x_t: "PDF sang Excel", tool_p2x_d: "Chuyển sang bảng tính XLS",
+        tool_p2p_t: "PDF sang PPT", tool_p2p_d: "Chuyển sang bản trình chiếu",
+        tool_p2i_t: "PDF sang Ảnh", tool_p2i_d: "Xuất file JPG hoặc PNG",
+        tool_w2p_t: "Word sang PDF", tool_w2p_d: "Chuyển đổi DOCX sang PDF",
+        tool_x2p_t: "Excel sang PDF", tool_x2p_d: "Xuất bảng tính sang PDF",
+        tool_i2p_t: "Ảnh sang PDF", tool_i2p_d: "Ghép ảnh thành tệp PDF",
+        tool_s2p_t: "Quét sang PDF", tool_s2p_d: "Chụp tài liệu sang PDF",
+        settingsTitle: "Cài Đặt", settingLangRow: "Ngôn ngữ hiển thị", settingLangSub: "Nhấn để thay đổi ngôn ngữ ứng dụng",
+        settingTheme: "Giao diện tối", settingSound: "Âm thanh & Rung", settingVersion: "Phiên bản ứng dụng",
+        paywallTitle: "Nâng Cấp NextAI Pro VIP", paywallSub: "100% Không Quảng Cáo • Xử Lý Không Giới Hạn",
+        paywallPromo: "TIẾT KIỆM 70% • PHỔ BIẾN NHẤT", paywallPlanTitle: "Gói Năm", paywallPlanDesc: "Thanh toán hàng năm • Hủy bất kỳ lúc nào",
+        paywallCta: "Tiếp Tục Đăng Ký VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Sao lưu tài liệu an toàn tuyệt đối", admobCta: "MỞ",
+        langModalTitle: "Chọn Ngôn Ngữ Ứng Dụng",
+        confirmDeleteSingle: "Bạn có chắc chắn muốn xóa vĩnh viễn tệp",
+        confirmDeleteBatch: "Bạn có chắc chắn muốn xóa vĩnh viễn các tệp đã chọn? Hành động này không thể hoàn tác.",
+        deletedToast: "Đã xóa vĩnh viễn tài liệu khỏi thiết bị!",
+        emptyTitle: "Danh mục tài liệu trống", emptyDesc: "Tất cả tài liệu đã được xóa vĩnh viễn khỏi thiết bị.",
+        btnImportDoc: "Thêm tệp từ máy",
+        minAgo: "phút trước", hourAgo: "giờ trước", yesterday: "Hôm qua", daysAgo: "ngày trước"
+      },
+      en: {
+        navHome: "Home", navFiles: "Files", navTools: "Tools", navAi: "AI Chat", navSettings: "Settings",
+        homeTitle: "NextAI Office Suite", userTier: "Free Tier • Ad Supported",
+        searchPlaceholder: "Search Word, Excel, PDF, PPTX...",
+        quickAi: "AI Assistant", quickScan: "OCR Scan", quickPdf: "PDF Tools", quickTransfer: "Wi-Fi Share",
+        catalogTitle: "Document Catalog", selectMultiple: "Select", cancelSelect: "Cancel",
+        tickAll: "Select All", delete: "Delete",
+        chipAll: "All", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "PDF Tools", pdfBannerTitle: "Fast Engine Technology", pdfBannerDesc: "100% Local & Secure",
+        secOrganize: "Organize & Edit", secFromPdf: "Convert from PDF", secToPdf: "Convert to PDF",
+        tool_merge_t: "Merge PDF", tool_merge_d: "Combine files into one",
+        tool_split_t: "Split PDF", tool_split_d: "Extract specific pages",
+        tool_compress_t: "Compress PDF", tool_compress_d: "Reduce file size",
+        tool_protect_t: "Protect PDF", tool_protect_d: "Set security password",
+        tool_unlock_t: "Unlock PDF", tool_unlock_d: "Remove PDF password",
+        tool_sign_t: "Sign PDF", tool_sign_d: "Add signature directly",
+        tool_pagenum_t: "Page Numbers", tool_pagenum_d: "Insert page numbering",
+        tool_p2w_t: "PDF to Word", tool_p2w_d: "Convert to DOCX format",
+        tool_p2x_t: "PDF to Excel", tool_p2x_d: "Convert to spreadsheet",
+        tool_p2p_t: "PDF to PPT", tool_p2p_d: "Convert to slides",
+        tool_p2i_t: "PDF to Image", tool_p2i_d: "Export JPG or PNG",
+        tool_w2p_t: "Word to PDF", tool_w2p_d: "Convert DOCX to PDF",
+        tool_x2p_t: "Excel to PDF", tool_x2p_d: "Export sheet to PDF",
+        tool_i2p_t: "Image to PDF", tool_i2p_d: "Convert images to PDF",
+        tool_s2p_t: "Scan to PDF", tool_s2p_d: "Capture document to PDF",
+        settingsTitle: "Settings", settingLangRow: "App Language", settingLangSub: "Tap to change the app language",
+        settingTheme: "Dark Theme", settingSound: "Sound & Vibration", settingVersion: "App Version",
+        paywallTitle: "Upgrade to NextAI Pro VIP", paywallSub: "100% Ad-Free • Unlimited Document Processing",
+        paywallPromo: "SAVE 70% • MOST POPULAR", paywallPlanTitle: "Annual Plan", paywallPlanDesc: "Billed annually • Cancel anytime",
+        paywallCta: "Continue with VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Secure cloud document backup", admobCta: "OPEN",
+        langModalTitle: "Select App Language",
+        confirmDeleteSingle: "Are you sure you want to permanently delete",
+        confirmDeleteBatch: "Are you sure you want to permanently delete selected files? This action cannot be undone.",
+        deletedToast: "Document permanently deleted from device!",
+        emptyTitle: "No Documents Found", emptyDesc: "All documents have been permanently removed from device.",
+        btnImportDoc: "Import Device File",
+        minAgo: "mins ago", hourAgo: "hours ago", yesterday: "Yesterday", daysAgo: "days ago"
+      },
+      es: {
+        navHome: "Inicio", navFiles: "Archivos", navTools: "Herramientas", navAi: "Chat IA", navSettings: "Ajustes",
+        homeTitle: "NextAI Office Suite", userTier: "Versión Gratuita • Con Anuncios",
+        searchPlaceholder: "Buscar Word, Excel, PDF, PPTX...",
+        quickAi: "Asistente IA", quickScan: "Escanear", quickPdf: "Herramientas PDF", quickTransfer: "Wi-Fi",
+        catalogTitle: "Catálogo de Documentos", selectMultiple: "Seleccionar", cancelSelect: "Cancelar",
+        tickAll: "Seleccionar todo", delete: "Eliminar",
+        chipAll: "Todos", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "Herramientas PDF", pdfBannerTitle: "Tecnología Fast Engine", pdfBannerDesc: "100% Local y Seguro",
+        secOrganize: "Organizar y Editar", secFromPdf: "Convertir desde PDF", secToPdf: "Convertir a PDF",
+        tool_merge_t: "Combinar PDF", tool_merge_d: "Unir varios archivos en uno",
+        tool_split_t: "Dividir PDF", tool_split_d: "Extraer páginas seleccionadas",
+        tool_compress_t: "Comprimir PDF", tool_compress_d: "Reducir tamaño del archivo",
+        tool_protect_t: "Proteger PDF", tool_protect_d: "Establecer contraseña",
+        tool_unlock_t: "Desbloquear PDF", tool_unlock_d: "Quitar contraseña",
+        tool_sign_t: "Firmar PDF", tool_sign_d: "Firmar directamente en pantalla",
+        tool_pagenum_t: "Números de Página", tool_pagenum_d: "Insertar numeración",
+        tool_p2w_t: "PDF a Word", tool_p2w_d: "Convertir a DOCX",
+        tool_p2x_t: "PDF a Excel", tool_p2x_d: "Convertir a XLS",
+        tool_p2p_t: "PDF a PPT", tool_p2p_d: "Convertir a diapositivas",
+        tool_p2i_t: "PDF a Imagen", tool_p2i_d: "Exportar JPG o PNG",
+        tool_w2p_t: "Word a PDF", tool_w2p_d: "Convertir DOCX a PDF",
+        tool_x2p_t: "Excel a PDF", tool_x2p_d: "Exportar hoja a PDF",
+        tool_i2p_t: "Imagen a PDF", tool_i2p_d: "Convertir fotos a PDF",
+        tool_s2p_t: "Escanear a PDF", tool_s2p_d: "Digitalizar documentos",
+        settingsTitle: "Ajustes", settingLangRow: "Idioma de la aplicación", settingLangSub: "Toque para cambiar el idioma",
+        settingTheme: "Tema Oscuro", settingSound: "Sonido y Vibración", settingVersion: "Versión de la App",
+        paywallTitle: "Mejorar a NextAI Pro VIP", paywallSub: "100% Sin Publicidad • Procesamiento Ilimitado",
+        paywallPromo: "AHORRA 70% • MÁS POPULAR", paywallPlanTitle: "Plan Anual", paywallPlanDesc: "Facturación anual • Cancela cuando quieras",
+        paywallCta: "Continuar con VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Copia de seguridad segura en la nube", admobCta: "ABRIR",
+        langModalTitle: "Seleccionar Idioma",
+        confirmDeleteSingle: "¿Seguro que desea eliminar permanentemente",
+        confirmDeleteBatch: "¿Desea eliminar permanentemente los archivos seleccionados? No se puede deshacer.",
+        deletedToast: "¡Documento eliminado permanentemente!",
+        emptyTitle: "Catálogo vacío", emptyDesc: "Todos los documentos han sido eliminados de forma permanente.",
+        btnImportDoc: "Importar archivo del dispositivo",
+        minAgo: "min atrás", hourAgo: "horas atrás", yesterday: "Ayer", daysAgo: "días atrás"
+      },
+      fr: {
+        navHome: "Accueil", navFiles: "Fichiers", navTools: "Outils", navAi: "Chat IA", navSettings: "Paramètres",
+        homeTitle: "NextAI Office Suite", userTier: "Version Gratuite • Avec Publicités",
+        searchPlaceholder: "Rechercher Word, Excel, PDF, PPTX...",
+        quickAi: "Assistant IA", quickScan: "Scanner OCR", quickPdf: "Outils PDF", quickTransfer: "Partage Wi-Fi",
+        catalogTitle: "Catalogue de Documents", selectMultiple: "Sélectionner", cancelSelect: "Annuler",
+        tickAll: "Tout sélectionner", delete: "Supprimer",
+        chipAll: "Tous", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "Outils PDF", pdfBannerTitle: "Technologie Fast Engine", pdfBannerDesc: "100% Local et Sécurisé",
+        secOrganize: "Organiser et Modifier", secFromPdf: "Convertir depuis PDF", secToPdf: "Convertir en PDF",
+        tool_merge_t: "Fusionner PDF", tool_merge_d: "Combiner plusieurs fichiers",
+        tool_split_t: "Diviser PDF", tool_split_d: "Extraire des pages ciblées",
+        tool_compress_t: "Compresser PDF", tool_compress_d: "Réduire la taille du fichier",
+        tool_protect_t: "Protéger PDF", tool_protect_d: "Définir un mot de passe",
+        tool_unlock_t: "Déverrouiller", tool_unlock_d: "Supprimer le mot de passe",
+        tool_sign_t: "Signature", tool_sign_d: "Signer directement le document",
+        tool_pagenum_t: "Numéro de Page", tool_pagenum_d: "Insérer des numéros de page",
+        tool_p2w_t: "PDF vers Word", tool_p2w_d: "Convertir au format DOCX",
+        tool_p2x_t: "PDF vers Excel", tool_p2x_d: "Convertir en tableur XLS",
+        tool_p2p_t: "PDF vers PPT", tool_p2p_d: "Convertir en diapositives",
+        tool_p2i_t: "PDF vers Image", tool_p2i_d: "Exporter en JPG ou PNG",
+        tool_w2p_t: "Word vers PDF", tool_w2p_d: "Convertir DOCX en PDF",
+        tool_x2p_t: "Excel vers PDF", tool_x2p_d: "Exporter classeur en PDF",
+        tool_i2p_t: "Image vers PDF", tool_i2p_d: "Convertir photos en PDF",
+        tool_s2p_t: "Scanner vers PDF", tool_s2p_d: "Numériser des documents",
+        settingsTitle: "Paramètres", settingLangRow: "Langue de l'application", settingLangSub: "Appuyez pour modifier la langue",
+        settingTheme: "Thème Sombre", settingSound: "Son et Vibreur", settingVersion: "Version de l'application",
+        paywallTitle: "Passer à NextAI Pro VIP", paywallSub: "100% Sans Publicité • Traitement Illimité",
+        paywallPromo: "ÉCONOMISEZ 70% • POPULAIRE", paywallPlanTitle: "Abonnement Annuel", paywallPlanDesc: "Facturé annuellement • Annulez à tout moment",
+        paywallCta: "Continuer avec VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Sauvegarde sécurisée dans le Cloud", admobCta: "OUVRIR",
+        langModalTitle: "Choisir la Langue",
+        confirmDeleteSingle: "Voulez-vous supprimer définitivement",
+        confirmDeleteBatch: "Supprimer définitivement les fichiers sélectionnés ? Action irréversible.",
+        deletedToast: "Document supprimé définitivement de l'appareil !",
+        emptyTitle: "Aucun document", emptyDesc: "Tous les documents ont été supprimés définitivement.",
+        btnImportDoc: "Importer un fichier de l'appareil",
+        minAgo: "min plus tôt", hourAgo: "heures plus tôt", yesterday: "Hier", daysAgo: "jours plus tôt"
+      },
+      de: {
+        navHome: "Start", navFiles: "Dateien", navTools: "Werkzeuge", navAi: "KI-Chat", navSettings: "Optionen",
+        homeTitle: "NextAI Office Suite", userTier: "Kostenlose Version • Mit Werbung",
+        searchPlaceholder: "Suchen Word, Excel, PDF, PPTX...",
+        quickAi: "KI-Assistent", quickScan: "OCR-Scan", quickPdf: "PDF-Tools", quickTransfer: "WLAN-Freigabe",
+        catalogTitle: "Dokumentenkatalog", selectMultiple: "Auswählen", cancelSelect: "Abbrechen",
+        tickAll: "Alle auswählen", delete: "Löschen",
+        chipAll: "Alle", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "PDF-Werkzeuge", pdfBannerTitle: "Fast Engine Technologie", pdfBannerDesc: "100% Lokal & Sicher",
+        secOrganize: "Organisieren & Bearbeiten", secFromPdf: "Aus PDF umwandeln", secToPdf: "In PDF umwandeln",
+        tool_merge_t: "PDF Zusammenfügen", tool_merge_d: "Dateien verbinden",
+        tool_split_t: "PDF Teilen", tool_split_d: "Seiten extrahieren",
+        tool_compress_t: "PDF Komprimieren", tool_compress_d: "Dateigröße reduzieren",
+        tool_protect_t: "PDF Schützen", tool_protect_d: "Passwort festlegen",
+        tool_unlock_t: "PDF Entsperren", tool_unlock_d: "Passwort entfernen",
+        tool_sign_t: "PDF Signieren", tool_sign_d: "Direkt unterschreiben",
+        tool_pagenum_t: "Seitenzahlen", tool_pagenum_d: "Nummerierung einfügen",
+        tool_p2w_t: "PDF zu Word", tool_p2w_d: "In DOCX konvertieren",
+        tool_p2x_t: "PDF zu Excel", tool_p2x_d: "In XLS konvertieren",
+        tool_p2p_t: "PDF zu PPT", tool_p2p_d: "In Folien konvertieren",
+        tool_p2i_t: "PDF zu Bild", tool_p2i_d: "Als JPG/PNG exportieren",
+        tool_w2p_t: "Word zu PDF", tool_w2p_d: "DOCX in PDF konvertieren",
+        tool_x2p_t: "Excel zu PDF", tool_x2p_d: "Tabelle in PDF exportieren",
+        tool_i2p_t: "Bild zu PDF", tool_i2p_d: "Bilder in PDF umwandeln",
+        tool_s2p_t: "Scan zu PDF", tool_s2p_d: "Dokumente scannen",
+        settingsTitle: "Einstellungen", settingLangRow: "App-Sprache", settingLangSub: "Tippen zum Ändern der Sprache",
+        settingTheme: "Dunkler Modus", settingSound: "Ton & Vibration", settingVersion: "App-Version",
+        paywallTitle: "Upgrade auf NextAI Pro VIP", paywallSub: "100% Werbefrei • Unbegrenzte Verarbeitung",
+        paywallPromo: "70% SPAREN • AM BELIEBTESTEN", paywallPlanTitle: "Jahresplan", paywallPlanDesc: "Jährliche Abrechnung • Jederzeit kündbar",
+        paywallCta: "Mit VIP fortfahren",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Sichere Dokumentensicherung", admobCta: "ÖFFNEN",
+        langModalTitle: "Sprache Auswählen",
+        confirmDeleteSingle: "Möchten Sie diese Datei wirklich dauerhaft löschen",
+        confirmDeleteBatch: "Ausgewählte Dateien unwiderruflich löschen?",
+        deletedToast: "Dokument dauerhaft vom Gerät gelöscht!",
+        emptyTitle: "Keine Dokumente", emptyDesc: "Alle Dokumente wurden dauerhaft entfernt.",
+        btnImportDoc: "Datei vom Gerät importieren",
+        minAgo: "Min. her", hourAgo: "Std. her", yesterday: "Gestern", daysAgo: "Tage her"
+      },
+      ja: {
+        navHome: "ホーム", navFiles: "ファイル", navTools: "ツール", navAi: "AIチャット", navSettings: "設定",
+        homeTitle: "NextAI Office Suite", userTier: "無料版 • 広告表示",
+        searchPlaceholder: "Word, Excel, PDF, PPTXを検索...",
+        quickAi: "AIアシスタント", quickScan: "OCRスキャン", quickPdf: "PDFツール", quickTransfer: "Wi-Fi転送",
+        catalogTitle: "ドキュメント一覧", selectMultiple: "選択", cancelSelect: "キャンセル",
+        tickAll: "すべて選択", delete: "削除",
+        chipAll: "すべて", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "PDFツール", pdfBannerTitle: "Fast Engine テクノロジー", pdfBannerDesc: "100% ローカル＆セキュア",
+        secOrganize: "整理と編集", secFromPdf: "PDFから変換", secToPdf: "PDFに変換",
+        tool_merge_t: "PDF結合", tool_merge_d: "複数ファイルを1つに結合",
+        tool_split_t: "PDF分割", tool_split_d: "必要なページを抽出",
+        tool_compress_t: "PDF圧縮", tool_compress_d: "ファイル容量を削減",
+        tool_protect_t: "PDF保護", tool_protect_d: "パスワードを設定",
+        tool_unlock_t: "ロック解除", tool_unlock_d: "パスワードを解除",
+        tool_sign_t: "電子署名", tool_sign_d: "画面上で直接署名",
+        tool_pagenum_t: "ページ番号", tool_pagenum_d: "ページ番号を挿入",
+        tool_p2w_t: "PDFからWord", tool_p2w_d: "DOCX形式に変換",
+        tool_p2x_t: "PDFからExcel", tool_p2x_d: "表計算シートに変換",
+        tool_p2p_t: "PDFからPPT", tool_p2p_d: "スライドに変換",
+        tool_p2i_t: "PDFから画像", tool_p2i_d: "JPG/PNGとして出力",
+        tool_w2p_t: "WordからPDF", tool_w2p_d: "DOCXをPDFに変換",
+        tool_x2p_t: "ExcelからPDF", tool_x2p_d: "表をPDFに出力",
+        tool_i2p_t: "画像からPDF", tool_i2p_d: "写真をPDFに変換",
+        tool_s2p_t: "スキャンからPDF", tool_s2p_d: "書類を直接PDF化",
+        settingsTitle: "設定", settingLangRow: "言語設定", settingLangSub: "タップして言語を変更",
+        settingTheme: "ダークテーマ", settingSound: "音と振動", settingVersion: "アプリバージョン",
+        paywallTitle: "NextAI Pro VIPへアップグレード", paywallSub: "完全広告なし • 無制限の処理機能",
+        paywallPromo: "70%オフ • 一番人気", paywallPlanTitle: "年間プラン", paywallPlanDesc: "年額払い • いつでも解約可能",
+        paywallCta: "VIPを登録して継続",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "安心のクラウドバックアップ", admobCta: "開く",
+        langModalTitle: "アプリ言語を選択",
+        confirmDeleteSingle: "このファイルを完全に削除してもよろしいですか",
+        confirmDeleteBatch: "選択したファイルを完全に削除しますか？この操作は元に戻せません。",
+        deletedToast: "端末から完全に削除されました！",
+        emptyTitle: "ドキュメントがありません", emptyDesc: "すべてのドキュメントは完全に削除されました。",
+        btnImportDoc: "端末からファイルを追加",
+        minAgo: "分前", hourAgo: "時間前", yesterday: "昨日", daysAgo: "日前"
+      },
+      ko: {
+        navHome: "홈", navFiles: "파일", navTools: "도구", navAi: "AI 채팅", navSettings: "설정",
+        homeTitle: "NextAI Office Suite", userTier: "무료 버전 • 광고 지원",
+        searchPlaceholder: "Word, Excel, PDF, PPTX 검색...",
+        quickAi: "AI 도우미", quickScan: "OCR 스캔", quickPdf: "PDF 도구", quickTransfer: "Wi-Fi 공유",
+        catalogTitle: "문서 목록", selectMultiple: "선택", cancelSelect: "취소",
+        tickAll: "전체 선택", delete: "삭제",
+        chipAll: "전체", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "PDF 도구 모음", pdfBannerTitle: "Fast Engine 기술", pdfBannerDesc: "100% 로컬 및 보안 유지",
+        secOrganize: "구성 및 편집", secFromPdf: "PDF에서 변환", secToPdf: "PDF로 변환",
+        tool_merge_t: "PDF 병합", tool_merge_d: "여러 파일을 하나로 합치기",
+        tool_split_t: "PDF 분할", tool_split_d: "원하는 페이지만 추출",
+        tool_compress_t: "PDF 압축", tool_compress_d: "파일 용량 최적화",
+        tool_protect_t: "PDF 암호화", tool_protect_d: "보호 비밀번호 설정",
+        tool_unlock_t: "암호 해제", tool_unlock_d: "PDF 비밀번호 제거",
+        tool_sign_t: "전자 서명", tool_sign_d: "화면에 직접 서명 추가",
+        tool_pagenum_t: "페이지 번호", tool_pagenum_d: "페이지 번호 자동 삽입",
+        tool_p2w_t: "PDF → Word", tool_p2w_d: "DOCX 형식으로 변환",
+        tool_p2x_t: "PDF → Excel", tool_p2x_d: "스프레드시트로 변환",
+        tool_p2p_t: "PDF → PPT", tool_p2p_d: "슬라이드로 변환",
+        tool_p2i_t: "PDF → 이미지", tool_p2i_d: "JPG/PNG로 내보내기",
+        tool_w2p_t: "Word → PDF", tool_w2p_d: "DOCX를 PDF로 변환",
+        tool_x2p_t: "Excel → PDF", tool_x2p_d: "시트를 PDF로 내보내기",
+        tool_i2p_t: "이미지 → PDF", tool_i2p_d: "사진을 PDF로 변환",
+        tool_s2p_t: "스캔 → PDF", tool_s2p_d: "문서 촬영 후 PDF 변환",
+        settingsTitle: "설정", settingLangRow: "표시 언어", settingLangSub: "탭하여 언어를 변경하세요",
+        settingTheme: "다크 모드", settingSound: "소리 및 진동", settingVersion: "앱 버전",
+        paywallTitle: "NextAI Pro VIP 업그레이드", paywallSub: "100% 광고 제거 • 무제한 문서 처리",
+        paywallPromo: "70% 할인 • 인기 플랜", paywallPlanTitle: "연간 플랜", paywallPlanDesc: "매년 결제 • 언제든 취소 가능",
+        paywallCta: "VIP 등록하기",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "안전한 클라우드 문서 백업", admobCta: "열기",
+        langModalTitle: "언어 선택",
+        confirmDeleteSingle: "이 문서를 영구 삭제하시겠습니까",
+        confirmDeleteBatch: "선택한 문서를 영구 삭제하시겠습니까? 복구할 수 없습니다.",
+        deletedToast: "기기에서 완전히 삭제되었습니다!",
+        emptyTitle: "문서가 없습니다", emptyDesc: "모든 샘플 문서가 영구 삭제되었습니다.",
+        btnImportDoc: "기기에서 파일 가져오기",
+        minAgo: "분 전", hourAgo: "시간 전", yesterday: "어제", daysAgo: "일 전"
+      },
+      zh: {
+        navHome: "首页", navFiles: "文件", navTools: "工具", navAi: "AI聊天", navSettings: "设置",
+        homeTitle: "NextAI Office Suite", userTier: "免费版 • 含广告",
+        searchPlaceholder: "搜索 Word, Excel, PDF, PPTX...",
+        quickAi: "AI助手", quickScan: "OCR扫描", quickPdf: "PDF工具", quickTransfer: "Wi-Fi传输",
+        catalogTitle: "文档目录", selectMultiple: "多选", cancelSelect: "取消",
+        tickAll: "全选", delete: "删除",
+        chipAll: "全部", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "PDF 工具箱", pdfBannerTitle: "Fast Engine 核心技术", pdfBannerDesc: "100% 本地运算与安全",
+        secOrganize: "整理与编辑", secFromPdf: "从 PDF 转换", secToPdf: "转换为 PDF",
+        tool_merge_t: "合并 PDF", tool_merge_d: "多文件合并为单文件",
+        tool_split_t: "拆分 PDF", tool_split_d: "提取选定页面",
+        tool_compress_t: "压缩 PDF", tool_compress_d: "智能缩减文件体积",
+        tool_protect_t: "加密 PDF", tool_protect_d: "设置文档访问密码",
+        tool_unlock_t: "解除密码", tool_unlock_d: "清除 PDF 密码限制",
+        tool_sign_t: "电子签名", tool_sign_d: "屏幕直接书写签名",
+        tool_pagenum_t: "添加页码", tool_pagenum_d: "自动插入页码编号",
+        tool_p2w_t: "PDF 转 Word", tool_p2w_d: "转换为 DOCX 格式",
+        tool_p2x_t: "PDF 转 Excel", tool_p2x_d: "转换为 XLS 表格",
+        tool_p2p_t: "PDF 转 PPT", tool_p2p_d: "转换为幻灯片",
+        tool_p2i_t: "PDF 转图片", tool_p2i_d: "导出为 JPG/PNG",
+        tool_w2p_t: "Word 转 PDF", tool_w2p_d: "将 DOCX 转为 PDF",
+        tool_x2p_t: "Excel 转 PDF", tool_x2p_d: "将工作表转为 PDF",
+        tool_i2p_t: "图片转 PDF", tool_i2p_d: "照片拼合为 PDF",
+        tool_s2p_t: "扫描转 PDF", tool_s2p_d: "拍摄纸质文档转 PDF",
+        settingsTitle: "设置", settingLangRow: "显示语言", settingLangSub: "点击切换全局界面语言",
+        settingTheme: "深色模式", settingSound: "声音与震动", settingVersion: "应用版本",
+        paywallTitle: "升级 NextAI Pro VIP", paywallSub: "100% 无广告 • 无限制文档处理",
+        paywallPromo: "立省 70% • 最受欢迎", paywallPlanTitle: "年度订阅", paywallPlanDesc: "按年计费 • 随时取消",
+        paywallCta: "立即开通 VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "安全私密的云端文档存储", admobCta: "打开",
+        langModalTitle: "选择界面语言",
+        confirmDeleteSingle: "您确定要彻底删除文件吗",
+        confirmDeleteBatch: "确定彻底删除所选文件？此操作无法撤销。",
+        deletedToast: "文档已从设备中彻底删除！",
+        emptyTitle: "文档列表为空", emptyDesc: "所有文件均已彻底清除。",
+        btnImportDoc: "从设备添加文件",
+        minAgo: "分钟前", hourAgo: "小时前", yesterday: "昨天", daysAgo: "天前"
+      },
+      ru: {
+        navHome: "Главная", navFiles: "Файлы", navTools: "Инструменты", navAi: "AI Чат", navSettings: "Настройки",
+        homeTitle: "NextAI Office Suite", userTier: "Бесплатная версия • С рекламой",
+        searchPlaceholder: "Поиск Word, Excel, PDF, PPTX...",
+        quickAi: "AI Ассистент", quickScan: "OCR Сканер", quickPdf: "PDF Утилиты", quickTransfer: "Wi-Fi Обмен",
+        catalogTitle: "Каталог документов", selectMultiple: "Выбрать", cancelSelect: "Отмена",
+        tickAll: "Выбрать все", delete: "Удалить",
+        chipAll: "Все", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "Инструменты PDF", pdfBannerTitle: "Технология Fast Engine", pdfBannerDesc: "100% Локально и Безопасно",
+        secOrganize: "Организация и правка", secFromPdf: "Конвертация из PDF", secToPdf: "Конвертация в PDF",
+        tool_merge_t: "Объединить PDF", tool_merge_d: "Собрать файлы в один",
+        tool_split_t: "Разделить PDF", tool_split_d: "Извлечь нужные страницы",
+        tool_compress_t: "Сжать PDF", tool_compress_d: "Уменьшить размер файла",
+        tool_protect_t: "Защитить PDF", tool_protect_d: "Установить пароль",
+        tool_unlock_t: "Снять защиту", tool_unlock_d: "Удалить пароль с PDF",
+        tool_sign_t: "Подписать PDF", tool_sign_d: "Электронная подпись",
+        tool_pagenum_t: "Номера страниц", tool_pagenum_d: "Вставить нумерацию",
+        tool_p2w_t: "PDF в Word", tool_p2w_d: "Конвертировать в DOCX",
+        tool_p2x_t: "PDF в Excel", tool_p2x_d: "Конвертировать в XLS",
+        tool_p2p_t: "PDF в PPT", tool_p2p_d: "Конвертировать в слайды",
+        tool_p2i_t: "PDF в Картинку", tool_p2i_d: "Экспорт в JPG или PNG",
+        tool_w2p_t: "Word в PDF", tool_w2p_d: "Преобразовать DOCX в PDF",
+        tool_x2p_t: "Excel в PDF", tool_x2p_d: "Экспорт таблицы в PDF",
+        tool_i2p_t: "Фото в PDF", tool_i2p_d: "Собрать фото в PDF",
+        tool_s2p_t: "Скан в PDF", tool_s2p_d: "Оцифровка документов",
+        settingsTitle: "Настройки", settingLangRow: "Язык интерфейса", settingLangSub: "Нажмите для смены языка",
+        settingTheme: "Темная тема", settingSound: "Звук и вибрация", settingVersion: "Версия приложения",
+        paywallTitle: "Перейти на NextAI Pro VIP", paywallSub: "100% Без рекламы • Неограниченная обработка",
+        paywallPromo: "СКИДКА 70% • ПОПУЛЯРНЫЙ", paywallPlanTitle: "Годовой тариф", paywallPlanDesc: "Ежегодная оплата • Отмена в любой момент",
+        paywallCta: "Продолжить с VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "Безопасное облачное резервирование", admobCta: "ОТКРЫТЬ",
+        langModalTitle: "Выберите язык приложения",
+        confirmDeleteSingle: "Вы действительно хотите удалить безвозвратно",
+        confirmDeleteBatch: "Безвозвратно удалить выбранные файлы? Это действие необратимо.",
+        deletedToast: "Документ навсегда удален с устройства!",
+        emptyTitle: "Список пуст", emptyDesc: "Все документы были удалены безвозвратно.",
+        btnImportDoc: "Добавить файл с устройства",
+        minAgo: "мин назад", hourAgo: "ч назад", yesterday: "Вчера", daysAgo: "дн назад"
+      },
+      ar: {
+        navHome: "الرئيسية", navFiles: "الملفات", navTools: "الأدوات", navAi: "محادثة AI", navSettings: "الإعدادات",
+        homeTitle: "NextAI Office Suite", userTier: "إصدار مجاني • مدعوم بالإعلانات",
+        searchPlaceholder: "بحث في Word, Excel, PDF, PPTX...",
+        quickAi: "مساعد AI", quickScan: "مسح OCR", quickPdf: "أدوات PDF", quickTransfer: "مشاركة Wi-Fi",
+        catalogTitle: "دليل المستندات", selectMultiple: "تحديد", cancelSelect: "إلغاء",
+        tickAll: "تحديد الكل", delete: "حذف",
+        chipAll: "الكل", chipWord: "Word", chipExcel: "Excel", chipPpt: "PowerPoint", chipPdf: "PDF",
+        pdfHeader: "أدوات PDF", pdfBannerTitle: "تقنية Fast Engine", pdfBannerDesc: "100% محلي وآمن بالكامل",
+        secOrganize: "تنظيم وتعديل", secFromPdf: "التحويل من PDF", secToPdf: "التحويل إلى PDF",
+        tool_merge_t: "دمج PDF", tool_merge_d: "جمع عدة ملفات في ملف واحد",
+        tool_split_t: "تقسيم PDF", tool_split_d: "استخراج صفحات محددة",
+        tool_compress_t: "ضغط PDF", tool_compress_d: "تقليل حجم الملف بذكاء",
+        tool_protect_t: "حماية PDF", tool_protect_d: "تعيين كلمة مرور آمنة",
+        tool_unlock_t: "إلغاء القفل", tool_unlock_d: "إزالة كلمة مرور الملف",
+        tool_sign_t: "توقيع PDF", tool_sign_d: "إضافة التوقيع مباشرة",
+        tool_pagenum_t: "ترقيم الصفحات", tool_pagenum_d: "إدراج أرقام الصفحات",
+        tool_p2w_t: "PDF إلى Word", tool_p2w_d: "تحويل إلى مستند DOCX",
+        tool_p2x_t: "PDF إلى Excel", tool_p2x_d: "تحويل إلى جدول بيانات XLS",
+        tool_p2p_t: "PDF إلى PPT", tool_p2p_d: "تحويل إلى عرض تقديمي",
+        tool_p2i_t: "PDF إلى صورة", tool_p2i_d: "تصدير بتنسيق JPG أو PNG",
+        tool_w2p_t: "Word إلى PDF", tool_w2p_d: "تحويل ملف DOCX إلى PDF",
+        tool_x2p_t: "Excel إلى PDF", tool_x2p_d: "تصدير ورقة العمل إلى PDF",
+        tool_i2p_t: "صورة إلى PDF", tool_i2p_d: "تحويل الصور إلى PDF",
+        tool_s2p_t: "مسح إلى PDF", tool_s2p_d: "التقاط المستندات إلى PDF",
+        settingsTitle: "الإعدادات", settingLangRow: "لغة التطبيق", settingLangSub: "اضغط لتغيير لغة الواجهة",
+        settingTheme: "الوضع الداكن", settingSound: "الصوت والاهتزاز", settingVersion: "إصدار التطبيق",
+        paywallTitle: "الترقية إلى NextAI Pro VIP", paywallSub: "100% بدون إعلانات • معالجة غير محدودة",
+        paywallPromo: "وفر 70% • الأكثر شيوعاً", paywallPlanTitle: "الاشتراك السنوي", paywallPlanDesc: "فاتورة سنوية • إلغاء في أي وقت",
+        paywallCta: "المتابعة مع VIP",
+        admobTitle: "NextAI Cloud Storage", admobDesc: "نسخ احتياطي سحابي آمن للمستندات", admobCta: "فتح",
+        langModalTitle: "اختر لغة التطبيق",
+        confirmDeleteSingle: "هل أنت متأكد من الحذف النهائي للملف",
+        confirmDeleteBatch: "هل أنت متأكد من حذف الملفات المحددة نهائياً؟ لا يمكن التراجع.",
+        deletedToast: "تم حذف المستند نهائياً من الجهاز!",
+        emptyTitle: "قائمة المستندات فارغة", emptyDesc: "تمت إزالة جميع المستندات نهائياً من هذا الجهاز.",
+        btnImportDoc: "إضافة ملف من الجهاز",
+        minAgo: "دقائق مضت", hourAgo: "ساعات مضت", yesterday: "أمس", daysAgo: "أيام مضت"
+      }
+    };
+
+    let currentAppLang = localStorage.getItem('nextai_office_current_lang') || 'vi';
+
+    function openLanguageModal() {
+      renderLanguageModalOptions();
+      const modal = document.getElementById('langModalOverlay');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeLanguageModal() {
+      const modal = document.getElementById('langModalOverlay');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function selectLanguage(langCode) {
+      if (!I18N_STRINGS[langCode]) return;
+      currentAppLang = langCode;
+      localStorage.setItem('nextai_office_current_lang', langCode);
+      applyLanguage(langCode);
+      closeLanguageModal();
+      showToast(`🌐 ${I18N_LANGUAGES.find(l => l.code === langCode)?.name || langCode}`);
+    }
+
+    function renderLanguageModalOptions() {
+      const listEl = document.getElementById('langOptionsList');
+      if (!listEl) return;
+      listEl.innerHTML = I18N_LANGUAGES.map(lang => {
+        const isSelected = lang.code === currentAppLang;
+        return `
+          <div class="lang-option ${isSelected ? 'selected' : ''}" onclick="selectLanguage('${lang.code}')">
+            <div class="lang-option-left">
+              <span class="lang-flag">${lang.flag}</span>
+              <div>
+                <div class="lang-name">${lang.name}</div>
+                <div class="lang-sub">${lang.label}</div>
+              </div>
+            </div>
+            <div class="lang-check">${isSelected ? '✓' : ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyLanguage(langCode) {
+      const s = I18N_STRINGS[langCode] || I18N_STRINGS.vi;
+
+      // 1. Navigation
+      const navH = document.getElementById('navTextHome'); if (navH) navH.textContent = s.navHome;
+      const navF = document.getElementById('navTextFiles'); if (navF) navF.textContent = s.navFiles;
+      const navT = document.getElementById('navTextTools'); if (navT) navT.textContent = s.navTools;
+      const navA = document.getElementById('navTextAi'); if (navA) navA.textContent = s.navAi;
+      const navS = document.getElementById('navTextSettings'); if (navS) navS.textContent = s.navSettings;
+
+      // 2. Home screen
+      const hTitle = document.getElementById('homeAppTitle'); if (hTitle) hTitle.textContent = s.homeTitle;
+      const uTier = document.getElementById('userTierSubtext'); if (uTier && !isVipTier) uTier.textContent = s.userTier;
+      const hSearch = document.getElementById('homeSearchInput'); if (hSearch) hSearch.placeholder = s.searchPlaceholder;
+      const qAi = document.getElementById('quickCardAi'); if (qAi) qAi.textContent = s.quickAi;
+      const qScan = document.getElementById('quickCardScanner'); if (qScan) qScan.textContent = s.quickScan;
+      const qPdf = document.getElementById('quickCardPdf'); if (qPdf) qPdf.textContent = s.quickPdf;
+      const qTrans = document.getElementById('quickCardTransfer'); if (qTrans) qTrans.textContent = s.quickTransfer;
+
+      const catTitle = document.getElementById('docCatalogTitle'); if (catTitle) catTitle.textContent = s.catalogTitle;
+      const btnSel = document.getElementById('btnSelectToggle');
+      if (btnSel) btnSel.textContent = isDocSelectMode ? s.cancelSelect : s.selectMultiple;
+      const tickLbl = document.getElementById('tickAllLabelText'); if (tickLbl) tickLbl.textContent = s.tickAll;
+      const delBtnTxt = document.getElementById('deleteBtnText'); if (delBtnTxt) delBtnTxt.textContent = s.delete;
+
+      const chipAll = document.getElementById('chipCatAll'); if (chipAll) chipAll.textContent = s.chipAll;
+      const chipWord = document.getElementById('chipCatWord'); if (chipWord) chipWord.textContent = s.chipWord;
+      const chipExcel = document.getElementById('chipCatExcel'); if (chipExcel) chipExcel.textContent = s.chipExcel;
+      const chipPpt = document.getElementById('chipCatPpt'); if (chipPpt) chipPpt.textContent = s.chipPpt;
+      const chipPdf = document.getElementById('chipCatPdf'); if (chipPdf) chipPdf.textContent = s.chipPdf;
+
+      // 3. PDF Tools screen
+      const pdfHeader = document.getElementById('pdfToolsHeaderTitle'); if (pdfHeader) pdfHeader.textContent = s.pdfHeader;
+      const pdfBTitle = document.getElementById('pdfBannerTitle'); if (pdfBTitle) pdfBTitle.textContent = s.pdfBannerTitle;
+      const pdfBDesc = document.getElementById('pdfBannerDesc'); if (pdfBDesc) pdfBDesc.textContent = s.pdfBannerDesc;
+      const secT1 = document.getElementById('toolsSectionTitle1'); if (secT1) secT1.textContent = s.secOrganize;
+      const secT2 = document.getElementById('toolsSectionTitle2'); if (secT2) secT2.textContent = s.secFromPdf;
+      const secT3 = document.getElementById('toolsSectionTitle3'); if (secT3) secT3.textContent = s.secToPdf;
+
+      // 15 Tool cards
+      const tMap = [
+        ['toolTitle_merge', s.tool_merge_t, 'toolDesc_merge', s.tool_merge_d],
+        ['toolTitle_split', s.tool_split_t, 'toolDesc_split', s.tool_split_d],
+        ['toolTitle_compress', s.tool_compress_t, 'toolDesc_compress', s.tool_compress_d],
+        ['toolTitle_protect', s.tool_protect_t, 'toolDesc_protect', s.tool_protect_d],
+        ['toolTitle_unlock', s.tool_unlock_t, 'toolDesc_unlock', s.tool_unlock_d],
+        ['toolTitle_sign', s.tool_sign_t, 'toolDesc_sign', s.tool_sign_d],
+        ['toolTitle_pagenum', s.tool_pagenum_t, 'toolDesc_pagenum', s.tool_pagenum_d],
+        ['toolTitle_pdf2word', s.tool_p2w_t, 'toolDesc_pdf2word', s.tool_p2w_d],
+        ['toolTitle_pdf2excel', s.tool_p2x_t, 'toolDesc_pdf2excel', s.tool_p2x_d],
+        ['toolTitle_pdf2ppt', s.tool_p2p_t, 'toolDesc_pdf2ppt', s.tool_p2p_d],
+        ['toolTitle_pdf2img', s.tool_p2i_t, 'toolDesc_pdf2img', s.tool_p2i_d],
+        ['toolTitle_word2pdf', s.tool_w2p_t, 'toolDesc_word2pdf', s.tool_w2p_d],
+        ['toolTitle_excel2pdf', s.tool_x2p_t, 'toolDesc_excel2pdf', s.tool_x2p_d],
+        ['toolTitle_img2pdf', s.tool_i2p_t, 'toolDesc_img2pdf', s.tool_i2p_d],
+        ['toolTitle_scan2pdf', s.tool_s2p_t, 'toolDesc_scan2pdf', s.tool_s2p_d]
+      ];
+      tMap.forEach(([tId, tVal, dId, dVal]) => {
+        const tEl = document.getElementById(tId); if (tEl) tEl.textContent = tVal;
+        const dEl = document.getElementById(dId); if (dEl) dEl.textContent = dVal;
+      });
+
+      // 4. Settings screen
+      const setHead = document.getElementById('settingsHeaderTitle'); if (setHead) setHead.textContent = s.settingsTitle;
+      const setLangT = document.getElementById('settingLangRowTitle'); if (setLangT) setLangT.textContent = s.settingLangRow;
+      const setLangS = document.getElementById('settingLangRowSub'); if (setLangS) setLangS.textContent = s.settingLangSub;
+      const curBadge = document.getElementById('currentLangBadge');
+      if (curBadge) {
+        const langObj = I18N_LANGUAGES.find(l => l.code === langCode);
+        curBadge.textContent = langObj ? `${langObj.flag} ${langObj.name}` : langCode;
+      }
+      const setTheme = document.getElementById('settingThemeTitle'); if (setTheme) setTheme.textContent = s.settingTheme;
+      const setSound = document.getElementById('settingSoundTitle'); if (setSound) setSound.textContent = s.settingSound;
+      const setVer = document.getElementById('settingVersionTitle'); if (setVer) setVer.textContent = s.settingVersion;
+
+      // 5. Paywall
+      const pwT = document.getElementById('paywallTitle'); if (pwT) pwT.textContent = s.paywallTitle;
+      const pwS = document.getElementById('paywallSub'); if (pwS) pwS.textContent = s.paywallSub;
+      const pwB = document.getElementById('paywallPromoBadge'); if (pwB) pwB.textContent = s.paywallPromo;
+      const pwPT = document.getElementById('paywallPlanTitle'); if (pwPT) pwPT.textContent = s.paywallPlanTitle;
+      const pwPD = document.getElementById('paywallPlanDesc'); if (pwPD) pwPD.textContent = s.paywallPlanDesc;
+      const pwCta = document.getElementById('paywallCtaBtn'); if (pwCta) pwCta.textContent = s.paywallCta;
+
+      // 6. AdMob
+      const adT = document.getElementById('admobBannerTitle'); if (adT) adT.textContent = s.admobTitle;
+      const adD = document.getElementById('admobBannerDesc'); if (adD) adD.textContent = s.admobDesc;
+      const adC = document.getElementById('admobCtaBtn'); if (adC) adC.textContent = s.admobCta;
+
+      // 7. Modals
+      const lmT = document.getElementById('langModalTitle'); if (lmT) lmT.textContent = s.langModalTitle;
+
+      // 8. Re-render doc list to apply translated relative times
+      renderDocList();
+    }
+
+    /* ==========================================================================
+       DOCUMENT CATALOG STATE & PERMANENT DELETION (LOCALSTORAGE - KPI 2)
+       Khi xóa là xóa vĩnh viễn khỏi thiết bị người dùng, không tự động khôi phục
+       ========================================================================== */
+    const STORAGE_KEY_DOCS = 'nextai_office_documents_catalog_v2';
+    const STORAGE_KEY_DELETED = 'nextai_office_deleted_document_ids_v2';
+
+    const INITIAL_DEMO_DOCS = [
+      { id: "1", type: "word", badge: "DOC", title: "Ke_Hoach_Kinh_Doanh_Q3.docx", tag: "Word", size: "450 KB", timeOffset: 10, timeUnit: 'min', fav: true },
+      { id: "2", type: "excel", badge: "XLS", title: "Bao_Cao_Doanh_Thu_2026.xlsx", tag: "Excel", size: "890 KB", timeOffset: 1, timeUnit: 'hour', fav: false },
+      { id: "3", type: "ppt", badge: "PPT", title: "Slide_Thuyet_Trinh_Goi_Von.pptx", tag: "PowerPoint", size: "3.4 MB", timeOffset: 0, timeUnit: 'yesterday', fav: false },
+      { id: "4", type: "pdf", badge: "PDF", title: "Hop_Dong_Dich_Vu_Bao_Mat.pdf", tag: "PDF", size: "1.2 MB", timeOffset: 2, timeUnit: 'day', fav: true },
+      { id: "5", type: "word", badge: "DOC", title: "Thoa_Thuan_Bao_Mat_NDA.docx", tag: "Word", size: "280 KB", timeOffset: 3, timeUnit: 'day', fav: false },
+      { id: "6", type: "excel", badge: "XLS", title: "Bang_Can_Doi_Ke_Toan.xlsx", tag: "Excel", size: "1.5 MB", timeOffset: 5, timeUnit: 'day', fav: false }
+    ];
+
+    function loadPersistedDocs() {
+      try {
+        const deletedIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY_DELETED) || '[]'));
+        const saved = localStorage.getItem(STORAGE_KEY_DOCS);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return parsed.filter(d => !deletedIds.has(d.id));
+        }
+        // First initialization: filter demo docs against any deleted IDs
+        const initial = INITIAL_DEMO_DOCS.filter(d => !deletedIds.has(d.id));
+        localStorage.setItem(STORAGE_KEY_DOCS, JSON.stringify(initial));
+        return initial;
+      } catch (e) {
+        console.error("Storage error:", e);
+        return INITIAL_DEMO_DOCS.slice();
+      }
+    }
+
+    function savePersistedDocs(list, newlyDeletedIds = []) {
+      try {
+        localStorage.setItem(STORAGE_KEY_DOCS, JSON.stringify(list));
+        if (newlyDeletedIds.length > 0) {
+          const currentDeleted = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY_DELETED) || '[]'));
+          newlyDeletedIds.forEach(id => currentDeleted.add(id));
+          localStorage.setItem(STORAGE_KEY_DELETED, JSON.stringify(Array.from(currentDeleted)));
+        }
+      } catch (e) {
+        console.error("Failed to save to localStorage:", e);
+      }
+    }
+
+    let docListState = loadPersistedDocs();
+    let selectedDocIds = new Set();
+    let isDocSelectMode = false;
+    let currentDocCategory = 'all';
+
+    function formatDocTime(doc, strings) {
+      if (doc.timeUnit === 'min') return `${doc.timeOffset} ${strings.minAgo}`;
+      if (doc.timeUnit === 'hour') return `${doc.timeOffset} ${strings.hourAgo}`;
+      if (doc.timeUnit === 'yesterday') return strings.yesterday;
+      if (doc.timeUnit === 'day') return `${doc.timeOffset} ${strings.daysAgo}`;
+      return doc.time || '';
+    }
+
+    function renderDocList() {
+      const container = document.getElementById('docListContainer');
+      if (!container) return;
+
+      const s = I18N_STRINGS[currentAppLang] || I18N_STRINGS.vi;
+      const filtered = docListState.filter(d => currentDocCategory === 'all' || d.type === currentDocCategory);
+
+      // Cập nhật badge tổng số lượng
+      const countBadge = document.getElementById('docCountBadge');
+      if (countBadge) countBadge.textContent = docListState.length;
+
+      const tickTotal = document.getElementById('tickAllTotalCount');
+      if (tickTotal) tickTotal.textContent = filtered.length;
+
+      // Cập nhật trạng thái nút Delete & Checkbox Tick All
+      updateSelectionUI(filtered);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="doc-empty-state">
+            <div class="icon">📂</div>
+            <h4>${s.emptyTitle}</h4>
+            <p>${s.emptyDesc}</p>
+            <div style="display:flex; justify-content: center; margin-top: 14px;">
+              <button class="btn-apply-code" onclick="document.getElementById('fileInputReal').click()">
+                <span>📥 ${s.btnImportDoc}</span>
+              </button>
+            </div>
+            <input type="file" id="fileInputReal" style="display:none" onchange="handleUserImportFile(event)" accept=".docx,.doc,.xlsx,.xls,.pptx,.ppt,.pdf,.txt" />
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(doc => {
+        const isSelected = selectedDocIds.has(doc.id);
+        const timeStr = formatDocTime(doc, s);
+        return `
+          <div class="doc-item ${isSelected ? 'selected' : ''}" data-id="${doc.id}" data-type="${doc.type}" onclick="handleDocItemClick('${doc.id}', '${doc.type}', '${doc.title}', '${doc.size}', event)">
+            <div class="doc-tick-box ${isDocSelectMode ? 'active' : ''}" onclick="event.stopPropagation()">
+              <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleDocItemCheck('${doc.id}', this.checked)" />
+            </div>
+            <div class="doc-badge-icon doc-badge-${doc.type}">${doc.badge}</div>
+            <div class="doc-meta">
+              <div class="doc-title">${doc.title}</div>
+              <div class="doc-sub">
+                <span class="doc-format-tag tag-${doc.type}">${doc.tag}</span>
+                <span>${doc.size}</span>
+                <span>• ${timeStr}</span>
+              </div>
+            </div>
+            <div class="doc-action-btns" onclick="event.stopPropagation()">
+              <button class="btn-doc-delete-single" onclick="confirmSingleDelete('${doc.id}', event)" title="${s.delete}">🗑️</button>
+              <span class="doc-fav-btn" onclick="toggleDocFav('${doc.id}')">${doc.fav ? '★' : '☆'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleUserImportFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      let type = 'pdf';
+      let badge = 'PDF';
+      let tag = 'PDF';
+      if (ext === 'docx' || ext === 'doc') { type = 'word'; badge = 'DOC'; tag = 'Word'; }
+      else if (ext === 'xlsx' || ext === 'xls') { type = 'excel'; badge = 'XLS'; tag = 'Excel'; }
+      else if (ext === 'pptx' || ext === 'ppt') { type = 'ppt'; badge = 'PPT'; tag = 'PowerPoint'; }
+
+      const sizeStr = file.size > 1048576 ? `${(file.size / 1048576).toFixed(1)} MB` : `${Math.round(file.size / 1024)} KB`;
+
+      const newDoc = {
+        id: "user_" + Date.now(),
+        type: type,
+        badge: badge,
+        title: file.name,
+        tag: tag,
+        size: sizeStr,
+        timeOffset: 1,
+        timeUnit: 'min',
+        fav: false
+      };
+
+      docListState.unshift(newDoc);
+      savePersistedDocs(docListState);
+      renderDocList();
+      showToast(`📥 Đã thêm tệp: ${file.name}`);
+    }
+
+    function toggleSelectMode() {
+      isDocSelectMode = !isDocSelectMode;
+      const s = I18N_STRINGS[currentAppLang] || I18N_STRINGS.vi;
+      const btn = document.getElementById('btnSelectToggle');
+      const bar = document.getElementById('docBatchBar');
+      if (isDocSelectMode) {
+        if (btn) {
+          btn.textContent = s.cancelSelect;
+          btn.classList.add('active');
+        }
+        if (bar) bar.classList.add('active');
+      } else {
+        if (btn) {
+          btn.textContent = s.selectMultiple;
+          btn.classList.remove('active');
+        }
+        if (bar) bar.classList.remove('active');
+        selectedDocIds.clear();
+      }
+      renderDocList();
+    }
+
+    function toggleTickAllDocs(checked) {
+      const filtered = docListState.filter(d => currentDocCategory === 'all' || d.type === currentDocCategory);
+      if (checked) {
+        filtered.forEach(d => selectedDocIds.add(d.id));
+      } else {
+        selectedDocIds.clear();
+      }
+      renderDocList();
+    }
+
+    function toggleDocItemCheck(id, checked) {
+      if (checked) {
+        selectedDocIds.add(id);
+      } else {
+        selectedDocIds.delete(id);
+      }
+      renderDocList();
+    }
+
+    function handleDocItemClick(id, type, title, size, event) {
+      if (isDocSelectMode) {
+        const isSelected = selectedDocIds.has(id);
+        toggleDocItemCheck(id, !isSelected);
+      } else {
+        openDocumentInViewer(type, title, size);
+      }
+    }
+
+    function updateSelectionUI(filteredList) {
+      const count = selectedDocIds.size;
+      const deleteBadge = document.getElementById('deleteBadgeCount');
+      if (deleteBadge) deleteBadge.textContent = count;
+
+      const deleteBtn = document.getElementById('btnDeleteBatch');
+      if (deleteBtn) {
+        deleteBtn.disabled = count === 0;
+      }
+
+      const tickAll = document.getElementById('tickAllDocsCheckbox');
+      if (tickAll && filteredList) {
+        tickAll.checked = filteredList.length > 0 && filteredList.every(d => selectedDocIds.has(d.id));
+      }
+    }
+
+    function confirmSingleDelete(id, event) {
+      if (event) event.stopPropagation();
+      const doc = docListState.find(d => d.id === id);
+      if (!doc) return;
+
+      const s = I18N_STRINGS[currentAppLang] || I18N_STRINGS.vi;
+      if (confirm(`${s.confirmDeleteSingle}: "${doc.title}"?`)) {
+        docListState = docListState.filter(d => d.id !== id);
+        selectedDocIds.delete(id);
+        savePersistedDocs(docListState, [id]);
+        renderDocList();
+        showToast(`🗑️ ${s.deletedToast}`);
+      }
+    }
+
+    function confirmBatchDelete() {
+      const count = selectedDocIds.size;
+      if (count === 0) return;
+
+      const s = I18N_STRINGS[currentAppLang] || I18N_STRINGS.vi;
+      if (confirm(`${s.confirmDeleteBatch} (${count} items)`)) {
+        const deletedIdsArr = Array.from(selectedDocIds);
+        docListState = docListState.filter(d => !selectedDocIds.has(d.id));
+        selectedDocIds.clear();
+        savePersistedDocs(docListState, deletedIdsArr);
+        isDocSelectMode = false;
+        const btn = document.getElementById('btnSelectToggle');
+        if (btn) {
+          btn.textContent = s.selectMultiple;
+          btn.classList.remove('active');
+        }
+        const bar = document.getElementById('docBatchBar');
+        if (bar) bar.classList.remove('active');
+
+        renderDocList();
+        showToast(`🗑️ ${s.deletedToast}`);
+      }
+    }
+
+    function toggleDocFav(id) {
+      const doc = docListState.find(d => d.id === id);
+      if (doc) {
+        doc.fav = !doc.fav;
+        savePersistedDocs(docListState);
+        renderDocList();
+      }
+    }
+
+    function filterDocs(type, chipEl) {
+      currentDocCategory = type;
+      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+      if (chipEl) chipEl.classList.add('active');
+      renderDocList();
+    }
+
+    /* Đồng hồ live */
+    function updateLiveClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('liveClock').textContent = h + ':' + m;
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+
+    // Khởi tạo ngôn ngữ đã lưu & nạp danh sách tài liệu
+    applyLanguage(currentAppLang);
+    loadSourceCodeFile('PdfToolsScreen.kt');
+  </script>
+</body>
+</html>

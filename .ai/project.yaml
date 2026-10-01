@@ -1,0 +1,23 @@
+name: nextai-office-suite
+version: 2.1.0
+type: full-stack-reconstruction
+standard: Development_Workspace_Standard_V2.1_Design_Gated
+target_package: com.nextaitechnology.officedocument
+publisher: nextaitechnology
+backend:
+  runtime: node-typescript
+  engine: go-converter
+  port: 6033
+  entry: src/index.ts
+android:
+  language: kotlin
+  ui_framework: jetpack-compose
+  min_sdk: 26
+  target_sdk: 35
+  compile_sdk: 35
+storage:
+  type: cloudflare-r2
+  local_transfer: webdav-https
+database:
+  relational: postgresql-sqlite
+  olap: clickhouse-duckdb
